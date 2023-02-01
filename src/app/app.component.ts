@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Validators } from '@angular/forms';
+// import { captchaDelivery, captchaValidation } from 'clock-captcha';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +9,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'web-application-poc';
+  _loginForm : FormGroup;
+  hide: boolean = true;
+  constructor(){
+    this._loginForm = new FormGroup({
+      username : new FormControl('', Validators.required),
+      password : new FormControl('', Validators.required)
+    });
+  }
 }
