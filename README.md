@@ -1,5 +1,5 @@
 # Prova di fattibilità | Applicazione web 
-Semplice applicazione che utilizza la libreria clock-CAPTCHA reperibile al link
+Semplice applicazione che utilizza la libreria clock-CAPTCHA reperibile al link: https://github.com/SWE-OutOfBounds/clock-captcha.
 
 ## Avviare server di sviluppo
 
