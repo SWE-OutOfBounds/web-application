@@ -3,7 +3,7 @@ Semplice applicazione che utilizza la libreria clock-CAPTCHA reperibile al link:
 
 ## Avviare server di sviluppo
 
-Per avviare l'applicazione digitare `ng serve -o`. Inserire altrimenti `ng serve` e aprire da un browser l'indirizzo `http://localhost:4200/`.
+Per avviare l'applicazione digitare `ng serve -o`. Inserire altrimenti `ng serve` e aprire da un browser l'indirizzo `http://localhost:4200/` (o quello ritornato dall'esecuzione del comando).
 
 ## Compilazione
 
