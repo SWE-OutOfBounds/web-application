@@ -8,3 +8,7 @@ Per avviare l'applicazione digitare `ng serve -o`. Inserire altrimenti `ng serve
 ## Compilazione
 
 Digitare `ng build` per compilare l'applicazione. Tutti i file prodotti saranno salvati nella cartella `dist/`.
+
+## Requisiti
+
+Nella stessa cartella in cui è presente l'applicazione, clonare anche https://github.com/SWE-OutOfBounds/clock-captcha.
