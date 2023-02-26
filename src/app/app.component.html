@@ -1,4 +1,4 @@
-<form class="login-form" [formGroup]="_loginForm">
+<form class="login-form" [formGroup]="_loginForm" autocomplete="off">
   <h1>SIGNIN</h1>
   <div class="logo-container">
     <svg id="logo-34" width="155" height="40" viewBox="0 0 155 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,10 +42,13 @@
     </svg>
   </div>
   <mat-form-field appearance="outline">
-    <mat-label>Nome Utente</mat-label>
-    <input type="text" matInput placeholder="Il tuo nome utente" formControlName="username">
-    <mat-error *ngIf="this._loginForm.get('username')?.hasError('required')">
+    <mat-label>Email</mat-label>
+    <input type="text" matInput placeholder="La tua email" formControlName="email">
+    <mat-error *ngIf="this._loginForm.get('email')?.hasError('required')">
       Il nome utente è necessario
+    </mat-error>
+    <mat-error *ngIf="this._loginForm.get('email')?.hasError('email')">
+      Inserisci una email valida
     </mat-error>
   </mat-form-field>
   <mat-form-field appearance="outline">
@@ -59,5 +62,6 @@
   </mat-form-field>
   <div id="clock-captcha"></div>
   <button mat-raised-button color="primary" type="submit"
-    [disabled]="(this._loginForm.get('username')?.hasError('required') || this._loginForm.get('password')?.hasError('required') || !this._captchaModule?.isHuman()) ? true : false">ACCEDI</button>
+    [disabled]="(this._loginForm.get('email')?.hasError('required') || this._loginForm.get('password')?.hasError('required') || !this._captchaModule?.isHuman()) ? true : false"
+    (click) = "login()">ACCEDI</button>
 </form>
