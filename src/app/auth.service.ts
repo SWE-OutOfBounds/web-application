@@ -11,7 +11,7 @@ import { Observable, map, catchError, of, throwError } from 'rxjs';
 })
 export class AuthService {
   private apiUrl: string = environment.authApiUrl;
-  private token: string = "";
+  private token: string | null= this.cookieService.get('access_token') || null;
 
   constructor(private http: HttpClient, private cookieService: CookieService) { }
 
@@ -29,15 +29,13 @@ export class AuthService {
           }
         }),
         catchError(error => {
-          console.error('Errore di rete:', error);
-          const errorMessage = 'Si è verificato un errore durante l\'autenticazione. Riprova più tardi.';
-          return throwError(errorMessage);
+          return of({success: false, status: error.status});
         })
       );
   }
 
   logout() {
-    this.token = "";
+    this.token = null;
     this.cookieService.delete('access_token');
   }
 
