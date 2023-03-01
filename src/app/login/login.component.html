@@ -45,7 +45,7 @@
       <mat-label>Email</mat-label>
       <input type="text" matInput placeholder="La tua email" formControlName="email">
       <mat-error *ngIf="this._loginForm.get('email')?.hasError('required')">
-        Il nome utente è necessario.
+        L'indirizzo email è necessario.
       </mat-error>
       <mat-error *ngIf="this._loginForm.get('email')?.hasError('email')">
         Inserisci una email valida.
