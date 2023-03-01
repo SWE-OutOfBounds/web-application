@@ -38,8 +38,7 @@ export class LoginComponent implements OnInit{
     this.authService.login(this._loginForm.value.email, this._loginForm.value.password).subscribe(
       (response) => {
         if (response.success) {
-          this.router.navigate(['']);
-          console.log('okay');
+            this.router.navigate(['']);
         }else if(response.status == 401){
           this._loginForm.get('email')?.setErrors({wrongCredentialError : true});
           this._loginForm.get('password')?.setErrors({wrongCredentialError : true});

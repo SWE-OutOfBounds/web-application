@@ -11,9 +11,14 @@ import { Observable, map, catchError, of, throwError } from 'rxjs';
 })
 export class AuthService {
   private apiUrl: string = environment.authApiUrl;
-  private token: string | null= this.cookieService.get('access_token') || null;
+  private email : string = "";
+  private uName : string = "";
 
-  constructor(private http: HttpClient, private cookieService: CookieService) { }
+
+  constructor(private http: HttpClient, private cookieService: CookieService) {
+    this.email = this.cookieService.get('email');
+    this.uName = this.cookieService.get('uName');
+  }
 
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(this.apiUrl, { email, password }, { observe: 'response' })
@@ -23,6 +28,12 @@ export class AuthService {
             const now = new Date();
             const expires = new Date(now.getTime() + (15 * 60 * 1000)); // Scadenza dopo 15 minuti
             this.cookieService.set('access_token', response.body.token, expires);
+            this.cookieService.set('email', response.body.email, expires);
+            this.cookieService.set('uName', response.body.userName, expires);
+            
+            this.email = response.body.email;
+            this.uName = response.body.userName;
+            
             return { success: true };
           }else{
             return { success: false, status: response.status}
@@ -33,17 +44,30 @@ export class AuthService {
         })
       );
   }
+  
+  getEmail() : string{
+    return this.email != "" ? this.email : "";
+
+  }
+
+  getuName() : string{
+    return this.uName != "" ? this.uName : "Ospite";
+  }
 
   logout() {
-    this.token = null;
     this.cookieService.delete('access_token');
+    this.cookieService.delete('email');
+    this.cookieService.delete('uName');
+
+    this.email = "";
+    this.uName = "";
   }
 
   isLoggedIn() {
-    return this.token !== null && this.token !== undefined;
+    return this.cookieService.get('access_token') !== '';
   }
 
   getToken() {
-    return this.token;
+    return this.cookieService.get('access_token');
   }
 }
