@@ -12,3 +12,7 @@ Backend running => https://github.com/SWE-OutOfBounds/web-application-backend-po
 ## Compilazione
 
 Digitare `ng build` per compilare l'applicazione. Tutti i file prodotti saranno salvati nella cartella `dist/`.
+
+## Requisiti
+
+Nella stessa cartella in cui è presente l'applicazione, clonare anche https://github.com/SWE-OutOfBounds/clock-captcha.
