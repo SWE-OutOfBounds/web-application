@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EnvironmentInjector, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
@@ -7,7 +7,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
-import { captchaModule } from '../../../../clock-captcha/dist/index';
+import { DistortionDecorator, ClockCAPTCHA, ShapesDecorator} from '../../../../clock-captcha/dist/index';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit{
   title: string = "loginPage";
   _loginForm: FormGroup;
   hide: boolean = true;
-  _captchaModule: captchaModule | null = null;
+  _captchaModule: DistortionDecorator | null = null;
 
   constructor(private router : Router, private _snackBar: MatSnackBar, private http: HttpClient, private authService: AuthService, private cookieService: CookieService) {
     console.log(document.getElementById('second'));
@@ -30,8 +30,8 @@ export class LoginComponent implements OnInit{
 
   }
   ngOnInit(): void {
-    this._captchaModule = new captchaModule();
-    this._captchaModule.show(document.getElementById('clock-captcha'));
+    this._captchaModule = new DistortionDecorator(new ClockCAPTCHA(), 8);
+    this._captchaModule.inject(document.getElementById('clock-captcha'));
   }
 
   login(): void {

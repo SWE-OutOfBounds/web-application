@@ -68,6 +68,6 @@
     </mat-form-field>
     <div id="clock-captcha"></div>
     <button mat-raised-button color="primary" type="submit"
-      [disabled]="(this._loginForm.get('email')?.hasError('required') || this._loginForm.get('password')?.hasError('required') || !this._captchaModule?.isHuman()) ? false : true"
+      [disabled]="(this._loginForm.get('email')?.hasError('required') || this._loginForm.get('password')?.hasError('required')) ? true : false"
       (click) = "login()">ACCEDI</button>
   </form>
