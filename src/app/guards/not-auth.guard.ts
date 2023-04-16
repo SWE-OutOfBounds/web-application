@@ -9,9 +9,7 @@ import { AuthService } from '../auth.service';
 export class NotAuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): boolean | UrlTree {
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
     const isAuthenticated = this.authService.isLoggedIn();
     if (!isAuthenticated) {
       return true;
