@@ -44,6 +44,25 @@ export class AuthService {
         })
       );
   }
+
+  getCanvas() : Observable<any>{
+    return this.http.get<any>('http://localhost:3030/clockCAPTCHA/new', { observe: 'response' })
+      .pipe(
+        map(response => {
+          console.log(response);
+          if (response.status == 200) {
+            return { success: response.body.canvas_content };
+          }else{
+            return { success: false, status: response.status}
+          }
+        }),
+        catchError(error => {
+          console.log(error);
+          return of({success: false, status: error.status});
+        })
+      
+      );
+  }
   
   getEmail() : string{
     return this.email != "" ? this.email : "";

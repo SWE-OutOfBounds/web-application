@@ -7,20 +7,20 @@ import { CookieService } from 'ngx-cookie-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
-import { DistortionDecorator, ClockCAPTCHA, ShapesDecorator} from '../../../../clock-captcha/dist/index';
+import { ShapesDecorator, ClockCAPTCHA } from '../../../../clock-captcha/dist/index';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit {
   title: string = "loginPage";
   _loginForm: FormGroup;
   hide: boolean = true;
-  _captchaModule: DistortionDecorator | null = null;
+  _captchaModule: ClockCAPTCHA | null = null;
 
-  constructor(private router : Router, private _snackBar: MatSnackBar, private http: HttpClient, private authService: AuthService, private cookieService: CookieService) {
+  constructor(private router: Router, private _snackBar: MatSnackBar, private http: HttpClient, private authService: AuthService, private cookieService: CookieService) {
     console.log(document.getElementById('second'));
 
     this._loginForm = new FormGroup({
@@ -30,19 +30,25 @@ export class LoginComponent implements OnInit{
 
   }
   ngOnInit(): void {
-    this._captchaModule = new DistortionDecorator(new ClockCAPTCHA(), 8);
-    this._captchaModule.inject(document.getElementById('clock-captcha'));
+    
+    this.authService.getCanvas().subscribe(
+      (response) => {
+        this._captchaModule = new ClockCAPTCHA(response.success, 'cicicicicic');
+        this._captchaModule.inject(document.getElementById('clock-captcha'));
+      }
+    );
+
   }
 
   login(): void {
     this.authService.login(this._loginForm.value.email, this._loginForm.value.password).subscribe(
       (response) => {
         if (response.success) {
-            this.router.navigate(['']);
-        }else if(response.status == 401){
-          this._loginForm.get('email')?.setErrors({wrongCredentialError : true});
-          this._loginForm.get('password')?.setErrors({wrongCredentialError : true});
-        }else{
+          this.router.navigate(['']);
+        } else if (response.status == 401) {
+          this._loginForm.get('email')?.setErrors({ wrongCredentialError: true });
+          this._loginForm.get('password')?.setErrors({ wrongCredentialError: true });
+        } else {
           this._snackBar.open("Errore interno al sito. Riprova tra qualche minuto.");
         }
       }
