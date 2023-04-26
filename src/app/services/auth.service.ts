@@ -46,7 +46,7 @@ export class AuthService {
   }
 
   getCanvas() : Observable<any>{
-    return this.http.get<any>('http://localhost:3030/clockCAPTCHA/new', { observe: 'response' })
+    return this.http.get<any>('http://localhost:3030/clockCAPTCHA', { observe: 'response' })
       .pipe(
         map(response => {
           console.log(response);
