@@ -2,12 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../auth.service';
 import { CookieService } from 'ngx-cookie-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
-import { ShapesDecorator, ClockCAPTCHA } from '../../../../clock-captcha/dist/index';
+import { ShapesDecorator, ClockCAPTCHA } from '../../../../../clock-captcha/dist/index';
 
 @Component({
   selector: 'app-login',

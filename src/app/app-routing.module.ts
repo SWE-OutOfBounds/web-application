@@ -3,8 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { NotAuthGuard } from './guards/not-auth.guard'
 
-import { HomepageComponent } from './homepage/homepage.component';
-import { LoginComponent } from './login/login.component';
+import { HomepageComponent } from './components/homepage/homepage.component';
+import { LoginComponent } from './components/login/login.component';
 
 const routes: Routes = [
   {path: '', component: HomepageComponent},
