@@ -21,56 +21,24 @@ export class AuthService {
   }
 
   login(email: string, password: string, cc_token: string, cc_input: string): Observable<any> {
-    console.log(cc_token);
     let Headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'x-secret-key': 'LQbHd5h334ciuy7'
     });
-
+    
+    console.log(' ciao');
     return this.http.post<any>(this.apiUrl, { email, password, cc_token, cc_input}, { headers: Headers })
-      .pipe(
-        map(response => {
-          console.log(response);
-          if (response.status == 200) {
-            const now = new Date();
-            const expires = new Date(now.getTime() + (15 * 60 * 1000)); // Scadenza dopo 15 minuti
-            this.cookieService.set('access_token', response.body.token, expires);
-            this.cookieService.set('email', response.body.email, expires);
-            this.cookieService.set('uName', response.body.userName, expires);
+    .pipe(
+      map(response => {
 
-            this.email = response.body.email;
-            this.uName = response.body.userName;
+            this.cookieService.set('access_token', response.session_token);
 
             return { success: true };
-          } else {
-            return { success: false, status: response.status }
-          }
-        }),
-        catchError(error => {
-          return of({ success: false, status: error.status });
-        })
-      );
-  }
-
-  getCanvas(): Observable<any> {
-    let Headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'x-secret-key': 'LQbHd5h334ciuy7'
-    });
-
-    return this.http.get<any>('http://localhost:3000/clock-captcha', { headers: Headers })
-      .pipe(
-        map(response => {
-            return { 
-              cc_content: response.canvas_content,
-              cc_token: response.token
-            };
         }),
         catchError(error => {
           console.log(error);
           return of({ success: false, status: error.status });
         })
-
       );
   }
 

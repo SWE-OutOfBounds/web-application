@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
 import { ClockCAPTCHA } from '../../../../../clock-captcha/dist/index';
+import { ClockCaptchaService } from 'src/app/services/clock-captcha.service';
 
 @Component({
   selector: 'app-login',
@@ -20,17 +21,22 @@ export class LoginComponent implements OnInit {
   hide: boolean = true;
   _captchaModule: ClockCAPTCHA | null = null;
 
-  constructor(private router: Router, private _snackBar: MatSnackBar, private http: HttpClient, private authService: AuthService, private cookieService: CookieService) {
-    console.log(document.getElementById('second'));
-
+  constructor(
+    private _router: Router,
+    private _snackBar: MatSnackBar,
+    private _authService: AuthService,
+    private _ccService: ClockCaptchaService
+  ) {
+    
     this._loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', Validators.required)
     });
 
   }
+
   ngOnInit(): void {
-    this.authService.getCanvas().subscribe(
+    this._ccService.ccInit().subscribe(
       (response) => {
         this._captchaModule = new ClockCAPTCHA(response.cc_content, response.cc_token);
         this._captchaModule.inject(document.getElementById('clock-captcha'));
@@ -40,12 +46,14 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-    //check for input format and other things
-    if (this._captchaModule)
-      this.authService.login(this._loginForm.value.email, this._loginForm.value.password, this._captchaModule.getToken(), this._captchaModule.getInput()).subscribe(
+    if (this._captchaModule?.getInput().length != 5){
+      this._captchaModule?.setTitle("Controlla il formato!")
+    }else if (this._captchaModule)
+      this._authService.login(this._loginForm.value.email, this._loginForm.value.password, this._captchaModule.getToken(), this._captchaModule.getInput()).subscribe(
         (response) => {
+          console.log(response);
           if (response.success) {
-            this.router.navigate(['']);
+            this._router.navigate(['']);
           } else if (response.status == 401) {
             this._loginForm.get('email')?.setErrors({ wrongCredentialError: true });
             this._loginForm.get('password')?.setErrors({ wrongCredentialError: true });
