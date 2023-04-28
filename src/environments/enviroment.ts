@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
-    authApiUrl: 'http://localhost:3333/auth',
+    authApiUrl: 'http://localhost:3000/session',
     token : "",
   };
