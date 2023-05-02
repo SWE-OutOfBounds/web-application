@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient,HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 
-import { environment } from '../../environments/enviroment';
+import { environment } from '../../../environments/enviroment';
 import { Observable, map, catchError, of, throwError } from 'rxjs';
 
 
@@ -10,9 +10,8 @@ import { Observable, map, catchError, of, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl: string = environment.authApiUrl;
-  private email: string = "";
-  private uName: string = "";
+  private email: string | null = null;
+  private uName: string | null = null;
 
 
   constructor(private http: HttpClient, private cookieService: CookieService) {
@@ -25,30 +24,31 @@ export class AuthService {
       'Content-Type': 'application/json',
       'x-secret-key': 'LQbHd5h334ciuy7'
     });
-    
-    console.log(' ciao');
-    return this.http.post<any>(this.apiUrl, { email, password, cc_token, cc_input}, { headers: Headers })
-    .pipe(
-      map(response => {
 
-            this.cookieService.set('access_token', response.session_token);
-
-            return { success: true };
+    return this.http.post<any>(environment.backendLocation + 'session', { email, password, cc_token, cc_input }, { headers: Headers, observe: 'response'})
+      .pipe(
+        map(response => {
+          if(response.status == 200){
+            this.cookieService.set('access_token', response.body.session_token);
+            return {okay : true};
+          }else{
+            return {okay : false, case: "???"}
+          }
         }),
         catchError(error => {
-          console.log(error);
-          return of({ success: false, status: error.status });
+          //4xx and 5xx codes
+          return of({ okay: false, case: error.error.details });
         })
       );
   }
 
   getEmail(): string {
-    return this.email != "" ? this.email : "";
+    return this.email ? this.email : "";
 
   }
 
   getuName(): string {
-    return this.uName != "" ? this.uName : "Ospite";
+    return this.uName ? this.uName : "Ospite";
   }
 
   logout() {

@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
-    authApiUrl: 'http://localhost:3000/session',
-    token : "",
+    backendLocation: 'http://localhost:3000/',
+    cc_key : 'LQbHd5h334ciuy7'
   };
