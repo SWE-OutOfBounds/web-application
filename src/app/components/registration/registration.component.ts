@@ -32,7 +32,7 @@ export class RegistrationComponent implements OnInit{
     this._signupForm = new FormGroup({
       'nome': new FormControl(null, [Validators.required, Validators.pattern(/^([A-Za-zàèéìòù]*\s?)*$/)]),
       'cognome': new FormControl(null, [Validators.required, Validators.pattern(/^([A-Z]*[a-z]*[àèéìòù]*\s?)*$/)]),
-      'username': new FormControl(null),
+      'username': new FormControl(null, Validators.required),
       'email': new FormControl(null, [Validators.required, Validators.email]),
       'password': new FormControl(null, [Validators.required, Validators.minLength(6), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\S]{1,}$/)])
     });

@@ -81,7 +81,11 @@
       type="text"
       placeholder="DalìTheBest"
       formControlName="username">
+      <mat-error *ngIf="this._signupForm.get('username')?.hasError('required')">
+        Username necessario per effettuare la registrazione.
+      </mat-error>
   </mat-form-field>
+
 
 
   <mat-form-field appearance="outline" class="example-full-width">
