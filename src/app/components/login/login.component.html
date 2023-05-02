@@ -74,4 +74,8 @@
     <button mat-raised-button color="primary" type="submit"
       [disabled]="(this._loginForm.get('email')?.hasError('required') || this._loginForm.get('password')?.hasError('required')) ? true : false"
       (click) = "login()">ACCEDI</button>
+
+      <div class="switchPage">
+        <p>Non sei ancora registrato? <a routerLink="/signup">REGISTRATI</a></p>
+      </div>
   </form>

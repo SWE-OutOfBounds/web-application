@@ -68,6 +68,11 @@ button:disabled {
     filter: grayscale(100%);
 }
 
+.switchPage{
+  text-align: center;
+  font-size: 1.3em;
+}
+
 @media screen and (max-width:1400px) {
     .login-form {
         width: 90%;

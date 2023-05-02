@@ -67,4 +67,28 @@ export class AuthService {
   getToken() {
     return this.cookieService.get('access_token');
   }
+
+  signUp(firstName: string, lastName:string, username: string, email: string, password: string, cc_token: string, cc_input: string){
+    let Headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-secret-key': 'LQbHd5h334ciuy7'
+    });
+
+    console.log('doing signUp');
+    return this.http.post<any>(environment.backendLocation + 'users', { firstName, lastName, username, email, password, cc_token, cc_input }, { headers: Headers })
+    .pipe(
+        map(response => {
+          if(response.status == 201){
+            return {okay : true};
+          }else{
+            return {okay : false, case: "???"}
+          }
+        }),
+        catchError(error => {
+          //4xx and 5xx codes
+          console.log(error);
+          return of({ okay: false, case: error.error });
+        })
+      );
+  }
 }
