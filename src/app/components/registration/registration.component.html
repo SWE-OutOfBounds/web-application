@@ -125,11 +125,8 @@
     <mat-error *ngIf="this._signupForm.get('password')?.hasError('required')">
       Password necessaria per effettuare la registrazione.
     </mat-error>
-    <mat-error *ngIf="this._signupForm.get('password')?.hasError('minlength')">
-      La password deve essere lunga almeno 6 caratteri
-    </mat-error>
     <mat-error *ngIf="this._signupForm.get('password')?.hasError('pattern')">
-      La password deve avere almeno un carattere minuscolo e almeno un carattere maiuscolo, non sono ammessi spazi
+      La password deve avere almeno 6 caratteri,un carattere minuscolo e un carattere maiuscolo senza spazi
     </mat-error>
   </mat-form-field>
 

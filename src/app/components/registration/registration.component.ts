@@ -15,7 +15,7 @@ import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captch
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.css']
 })
-export class RegistrationComponent implements OnInit{
+export class RegistrationComponent implements OnInit {
 
   title: string = "registrationPage";
   _signupForm: FormGroup;
@@ -49,72 +49,110 @@ export class RegistrationComponent implements OnInit{
   }
 
   signUp(): void {
-    if (this._captchaModule?.getInput().length != 5){
+    if (this._captchaModule?.getInput().length != 5) {
       this._captchaModule?.error("Controlla il formato!")
-    } else if (this._captchaModule){
+    } else if (this._captchaModule) {
       this._authService.signUp(this._signupForm.value.nome,
-                          this._signupForm.value.cognome,
-                          this._signupForm.value.username,
-                          this._signupForm.value.email,
-                          this._signupForm.value.password,
-                          this._captchaModule.getToken(),
-                          this._captchaModule.getInput())
-      .subscribe(result => {
-        console.log(result);
-        //this._snackBar.open('Registrazione avvenuta con successo!');
-        if (result.okay) {
-          this._router.navigate(['\login']);
-        } else {
-          switch (result.case) {
-            //Errore nel CAPTCHA deve avvenire in altro posto
-            // case 'BAD_CAPTCHA':
-            //   this._captchaModule?.clear();
-            //   this._captchaModule?.error("OPS, ORARIO SCORRETTO!");
-            //   this._ccService.ccInit().subscribe(
-            //     (response) => {
-            //       this._captchaModule?.redraw(response.cc_content, response.cc_token);
-            //     }
-            //   );
-            //   break;
+        this._signupForm.value.cognome,
+        this._signupForm.value.username,
+        this._signupForm.value.email,
+        this._signupForm.value.password,
+        this._captchaModule.getToken(),
+        this._captchaModule.getInput())
+        .subscribe(result => {
+          console.log(result);
+          //this._snackBar.open('Registrazione avvenuta con successo!');
+          if (result.okay) {
+            this._router.navigate(['/login']);
+          } else {
+            switch (result.case) {
+              case 'BAD_CAPTCHA':
+                this._captchaModule?.clear();
+                this._captchaModule?.error("OPS, ORARIO SCORRETTO!");
+                this._ccService.ccInit().subscribe(
+                  (response) => {
+                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                  }
+                );
+                break;
+              case 'USED_TOKEN':
+                this._captchaModule?.clear();
+                this._captchaModule?.error("Qualcosa è andato storto. Riprova");
+                this._ccService.ccInit().subscribe(
+                  (response) => {
+                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                  }
+                );
+                break;
+              case 'INVALID_FORMAT_FIRSTNAME':
+                this._captchaModule?.clear();
+                this._ccService.ccInit().subscribe(
+                  (response) => {
+                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                  }
+                );
+                this._signupForm.get('nome')?.setErrors({ pattern: true });
+                break;
+              case 'INVALID_FORMAT_LASTNAME':
+                this._captchaModule?.clear();
+                this._ccService.ccInit().subscribe(
+                  (response) => {
+                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                  }
+                );
+                this._signupForm.get('cognome')?.setErrors({ pattern: true });
+                break;
+              case 'INVALID_FORMAT_USERNAME':
+                this._captchaModule?.clear();
+                this._ccService.ccInit().subscribe(
+                  (response) => {
+                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                  }
+                );
+                this._signupForm.get('username')?.setErrors({ required: true });
+                break;
+              case 'INVALID_FORMAT_EMAIL':
+                this._captchaModule?.clear();
+                this._ccService.ccInit().subscribe(
+                  (response) => {
+                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                  }
+                );
+                this._signupForm.get('email')?.setErrors({ email: true });
+                break;
+              case 'INVALID_FORMAT_PASSWORD':
+                this._captchaModule?.clear();
+                this._ccService.ccInit().subscribe(
+                  (response) => {
+                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                  }
+                );
+                this._signupForm.get('passworx')?.setErrors({ pattern: true });
+                break;
 
-            case 'Formato errato.':
-              this._captchaModule?.clear();
-              this._ccService.ccInit().subscribe(
-                (response) => {
-                  this._captchaModule?.redraw(response.cc_content, response.cc_token);
-                }
-              );
-              // creare un messaggio
-              //this._signupForm.get('email')?.setErrors({ email: true });
-              //this._signupForm.get('password')?.setErrors({ pattern: true });
-              break;
+              case 'USED_EMAIL':
+                this._signupForm.get('email')?.setErrors({ alreadyExisted: true });
+                this._captchaModule?.clear();
+                this._ccService.ccInit().subscribe(
+                  (response) => {
+                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                  }
+                );
+                break;
 
-            case 'Database error.':
-              this._captchaModule?.clear();
-              this._ccService.ccInit().subscribe(
-                (response) => {
-                  this._captchaModule?.redraw(response.cc_content, response.cc_token);
-                }
-              );
-              break;
-
-            case 'Email in uso.':
-              this._signupForm.get('email')?.setErrors({ alreadyExisted: true });
-              this._captchaModule?.clear();
-              this._ccService.ccInit().subscribe(
-                (response) => {
-                  this._captchaModule?.redraw(response.cc_content, response.cc_token);
-                }
-              );
-              break;
-
-            default:
-              this._snackBar.open("Errore interno al sito. Riprova tra qualche minuto.");
-              break;
-          }
+              default:
+                this._captchaModule?.clear();
+                this._ccService.ccInit().subscribe(
+                  (response) => {
+                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                  }
+                );
+                this._snackBar.open("Errore interno al sito. Riprova tra qualche minuto.");
+                break;
+            }
           }
         });
-  }
+    }
   }
 }
 
