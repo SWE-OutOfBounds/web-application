@@ -48,7 +48,7 @@
       <mat-error *ngIf="this._loginForm.get('email')?.hasError('required')">
         L'indirizzo email è necessario.
       </mat-error>
-      <mat-error *ngIf="this._loginForm.get('email')?.hasError('email')">
+      <mat-error *ngIf="this._loginForm.get('email')?.hasError('pattern')">
         Inserisci una email valida.
       </mat-error>
       <mat-error *ngIf="this._loginForm.get('email')?.hasError('wrongCredentialError')">
