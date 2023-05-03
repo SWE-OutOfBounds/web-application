@@ -74,7 +74,6 @@ export class AuthService {
       'x-secret-key': 'LQbHd5h334ciuy7'
     });
 
-    console.log('doing signUp');
     return this.http.post<any>(environment.backendLocation + 'users', { firstName, lastName, username, email, password, cc_token, cc_input }, { headers: Headers })
     .pipe(
         map(response => {
@@ -86,8 +85,7 @@ export class AuthService {
         }),
         catchError(error => {
           //4xx and 5xx codes
-          console.log(error);
-          return of({ okay: false, case: error.error });
+          return of({ okay: false, case: error.error.details });
         })
       );
   }
