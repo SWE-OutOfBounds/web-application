@@ -33,7 +33,7 @@ export class RegistrationComponent implements OnInit {
       'nome': new FormControl(null, [Validators.required, Validators.pattern(/^([A-Za-zàèéìòù]*\s?)*$/)]),
       'cognome': new FormControl(null, [Validators.required, Validators.pattern(/^([A-Z]*[a-z]*[àèéìòù]*\s?)*$/)]),
       'username': new FormControl(null, Validators.required),
-      'email': new FormControl(null, [Validators.required, Validators.email]),
+      'email': new FormControl(null, [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/)]),
       'password': new FormControl(null, [Validators.required, Validators.minLength(6), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\S]{1,}$/)])
     });
   }

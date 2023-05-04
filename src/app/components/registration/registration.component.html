@@ -99,7 +99,7 @@
     <mat-error *ngIf="this._signupForm.get('email')?.hasError('required')">
       Email necessaria per effettuare la registrazione.
     </mat-error>
-    <mat-error *ngIf="this._signupForm.get('email')?.hasError('email')">
+    <mat-error *ngIf="this._signupForm.get('email')?.hasError('pattern')">
       Inserisci una email valida.
     </mat-error>
   </mat-form-field>
