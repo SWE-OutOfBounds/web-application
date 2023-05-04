@@ -39,10 +39,11 @@ export class RegistrationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._captchaModule = new ClockCAPTCHA();
+    this._captchaModule.inject(document.getElementById('clock-captcha'));
     this._ccService.ccInit().subscribe(
       (response) => {
-        this._captchaModule = new ClockCAPTCHA(response.cc_content, response.cc_token);
-        this._captchaModule.inject(document.getElementById('clock-captcha'));
+        this._captchaModule?.fill(response.body.cc_content, response.body.cc_token);
       }
     );
 
@@ -71,7 +72,7 @@ export class RegistrationComponent implements OnInit {
                 this._captchaModule?.error("OPS, ORARIO SCORRETTO!");
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 break;
@@ -80,7 +81,7 @@ export class RegistrationComponent implements OnInit {
                 this._captchaModule?.error("Qualcosa è andato storto. Riprova");
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 break;
@@ -88,7 +89,7 @@ export class RegistrationComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 this._signupForm.get('nome')?.setErrors({ pattern: true });
@@ -97,7 +98,7 @@ export class RegistrationComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 this._signupForm.get('cognome')?.setErrors({ pattern: true });
@@ -106,7 +107,7 @@ export class RegistrationComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 this._signupForm.get('username')?.setErrors({ required: true });
@@ -115,7 +116,7 @@ export class RegistrationComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 this._signupForm.get('email')?.setErrors({ email: true });
@@ -124,7 +125,7 @@ export class RegistrationComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 this._signupForm.get('passworx')?.setErrors({ pattern: true });
@@ -135,7 +136,7 @@ export class RegistrationComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 break;
@@ -144,7 +145,7 @@ export class RegistrationComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 this._snackBar.open("Errore interno al sito. Riprova tra qualche minuto.");

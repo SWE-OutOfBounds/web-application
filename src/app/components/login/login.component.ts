@@ -34,12 +34,15 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._ccService.ccInit().subscribe(
-      (response) => {
-        this._captchaModule = new ClockCAPTCHA(response.cc_content, response.cc_token);
-        this._captchaModule.inject(document.getElementById('clock-captcha'));
-      }
-    );
+    this._captchaModule = new ClockCAPTCHA();
+    this._captchaModule.inject(document.getElementById('clock-captcha'));
+    setTimeout(() => {
+      this._ccService.ccInit().subscribe(
+        (response) => {
+          this._captchaModule?.fill(response.cc_content, response.cc_token);
+        }
+      );
+    }, 2000);
 
   }
 
@@ -59,7 +62,7 @@ export class LoginComponent implements OnInit {
                 this._captchaModule?.error("OPS, ORARIO SCORRETTO!");
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 break;
@@ -68,7 +71,7 @@ export class LoginComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 this._loginForm.get('email')?.setErrors({ wrongCredentialError: true });
@@ -80,7 +83,7 @@ export class LoginComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 break;
@@ -90,7 +93,7 @@ export class LoginComponent implements OnInit {
                 this._captchaModule?.clear();
                 this._ccService.ccInit().subscribe(
                   (response) => {
-                    this._captchaModule?.redraw(response.cc_content, response.cc_token);
+                    this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
                 break;
