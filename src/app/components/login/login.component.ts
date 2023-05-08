@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
-import { AuthService } from '../../services/session/auth.service';
+import { SessionService } from '../../services/session/session.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
@@ -14,15 +14,14 @@ import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captch
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  title: string = "loginPage";
-  _loginForm: FormGroup;
-  hide: boolean = true;
-  _captchaModule: ClockCAPTCHA | null = null;
+  protected _loginForm: FormGroup;
+  protected _hide: boolean = true;
+  private _captchaModule: ClockCAPTCHA | null = null;
 
   constructor(
     private _router: Router,
     private _snackBar: MatSnackBar,
-    private _authService: AuthService,
+    private _sessionService: SessionService,
     private _ccService: ClockCaptchaService
   ) {
 
@@ -50,7 +49,7 @@ export class LoginComponent implements OnInit {
     if (this._captchaModule?.getInput().length != 5) {
       this._captchaModule?.error("Controlla il formato!")
     } else if (this._captchaModule)
-      this._authService.login(this._loginForm.value.email, this._loginForm.value.password, this._captchaModule.getToken(), this._captchaModule.getInput()).subscribe(
+      this._sessionService.login(this._loginForm.value.email, this._loginForm.value.password, this._captchaModule.getToken(), this._captchaModule.getInput()).subscribe(
         (result) => {
           console.log(result);
           if (result.okay) {

@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
 import { ClockCAPTCHA } from '../../../../../clock-captcha/dist/index';
-import { AuthService } from 'src/app/services/session/auth.service';
+import { SessionService } from 'src/app/services/session/session.service';
 import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captcha.service';
 
 
@@ -16,16 +16,14 @@ import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captch
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent implements OnInit {
-
-  title: string = "registrationPage";
-  _signupForm: FormGroup;
-  hide: boolean = true;
-  _captchaModule: ClockCAPTCHA | null = null;
+  protected _signupForm: FormGroup;
+  protected _hide: boolean = true;
+  private _captchaModule: ClockCAPTCHA | null = null;
 
   constructor(
     private _snackBar: MatSnackBar,
     private _router: Router,
-    private _authService: AuthService,
+    private _sessionService: SessionService,
     private _ccService: ClockCaptchaService
   ) {
 
@@ -53,7 +51,7 @@ export class RegistrationComponent implements OnInit {
     if (this._captchaModule?.getInput().length != 5) {
       this._captchaModule?.error("Controlla il formato!")
     } else if (this._captchaModule) {
-      this._authService.signUp(this._signupForm.value.nome,
+      this._sessionService.signUp(this._signupForm.value.nome,
         this._signupForm.value.cognome,
         this._signupForm.value.username,
         this._signupForm.value.email,

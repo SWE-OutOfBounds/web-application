@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from '../services/session/auth.service';
+import { SessionService } from '../services/session/session.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotAuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private _sessionService: SessionService, private _router: Router) { }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
-    const isAuthenticated = this.authService.isLoggedIn();
-    if (!isAuthenticated) {
-      return true;
-    }
-    return this.router.parseUrl('');
-  }  
+    if (!this._sessionService.isSessionOpen()) return true;
+    else return this._router.parseUrl('');
+  }
 }

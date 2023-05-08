@@ -8,7 +8,7 @@ import { environment } from 'src/environments/enviroment';
 })
 export class ClockCaptchaService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private _http: HttpClient) { }
 
   ccInit(): Observable<any> {
     let Headers = new HttpHeaders({
@@ -16,7 +16,7 @@ export class ClockCaptchaService {
       'x-secret-key': environment.cc_key,
     });
 
-    return this.http.get<any>(environment.backendLocation + 'clock-captcha', { headers: Headers, observe: 'response' })
+    return this._http.get<any>(environment.backendLocation + 'clock-captcha', { headers: Headers, observe: 'response' })
       .pipe(
         map(response => {
           return {
@@ -30,14 +30,5 @@ export class ClockCaptchaService {
         })
 
       );
-  }
-
-  ccValidate(cc_token: string, cc_input: string): Observable<any> {
-    let Headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'x-secret-key': environment.cc_key,
-    });
-
-    return this.http.post<any>(environment.backendLocation + 'clock-captcha', { headers: Headers, observe: 'response' });//TODO
   }
 }

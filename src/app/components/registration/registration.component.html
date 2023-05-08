@@ -109,11 +109,11 @@
     <mat-label>Password</mat-label>
     <input
       matInput
-      [type]="hide ? 'password' : 'text'"
+      [type]="_hide ? 'password' : 'text'"
       placeholder="La tua password"
       formControlName="password"
     >
-    <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    <mat-icon matSuffix (click)="_hide = !_hide">{{_hide ? 'visibility_off' : 'visibility'}}</mat-icon>
 
     <!-- <mat-hint>
       <ul>

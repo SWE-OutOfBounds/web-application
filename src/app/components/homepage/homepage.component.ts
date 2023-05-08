@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/session/auth.service';
+import { SessionService } from '../../services/session/session.service';
 
 @Component({
   selector: 'app-homepage',
@@ -15,24 +15,24 @@ export class HomepageComponent {
   userEmail: string = "";
 
 
-  constructor(private authService: AuthService, private router: Router) {
-    this.authDetector = this.authService.isLoggedIn();
-    this.userName = this.authService.getuName();
-    this.userEmail = this.authService.getEmail();
+  constructor(protected _sessionService: SessionService, private _router: Router) {
+    // this.authDetector = this.authService.isLoggedIn();
+    this.userName = this._sessionService.getUsername();
+    this.userEmail = this._sessionService.getEmail();
 
     let firstLetter = this.userName.slice(0, 1).toUpperCase();
-    let restOfString = this.userName.slice(1);
-    this.userName = firstLetter + restOfString;
+    let restOfstring = this.userName.slice(1);
+    this.userName = firstLetter + restOfstring;
   }
 
   logOut() {
-    this.authService.logout();
+    this._sessionService.logout();
     this.authDetector == false;
     this.userName = "Ospite";
     this.userEmail = "";
-    let currentUrl = this.router.url;
-    this.router.navigateByUrl('/login', { skipLocationChange: true }).then(() => {
-      this.router.navigate([currentUrl]);
+    let currentUrl = this._router.url;
+    this._router.navigateByUrl('/login', { skipLocationChange: true }).then(() => {
+      this._router.navigate([currentUrl]);
     });
   }
 }

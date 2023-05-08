@@ -53,7 +53,7 @@
         <mat-card-actions>
             <button *ngIf="!this.authDetector" [routerLink]="['login']" mat-raised-button
                 color="primary">ACCEDI</button>
-            <button *ngIf="this.authDetector" (click)="logOut()" mat-raised-button color="primary">ESCI</button>
+            <button *ngIf="this._sessionService.isSessionOpen()" (click)="logOut()" mat-raised-button color="primary">ESCI</button>
         </mat-card-actions>
     </mat-card>
 

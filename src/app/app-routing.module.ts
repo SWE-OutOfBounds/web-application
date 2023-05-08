@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
 import { NotAuthGuard } from './guards/not-auth.guard'
 
 import { HomepageComponent } from './components/homepage/homepage.component';
@@ -10,7 +9,7 @@ import { RegistrationComponent } from './components/registration/registration.co
 const routes: Routes = [
   {path: '', component: HomepageComponent},
   {path: 'login', component: LoginComponent, canActivate: [NotAuthGuard]},
-  {path: 'signup', component: RegistrationComponent, canActivate: [NotAuthGuard]},
+  {path: 'signup', component: RegistrationComponent},
 ];
 
 @NgModule({
