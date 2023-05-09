@@ -20,7 +20,7 @@ export class ClockCaptchaService {
       .pipe(
         map(response => {
           return {
-            cc_content: response.body.canvas_content,
+            cc_content: response.body.image,
             cc_token: response.body.token
           };
         }),

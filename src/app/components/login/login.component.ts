@@ -5,7 +5,7 @@ import { SessionService } from '../../services/session/session.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
-import { ClockCAPTCHA } from '../../../../../clock-captcha/dist';
+import { ClockCAPTCHAView } from '../../../../../clock-captcha/dist';
 import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captcha.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captch
 export class LoginComponent implements OnInit {
   protected _loginForm: FormGroup;
   protected _hide: boolean = true;
-  private _captchaModule: ClockCAPTCHA | null = null;
+  private _captchaModule: ClockCAPTCHAView | null = null;
 
   constructor(
     private _router: Router,
@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._captchaModule = new ClockCAPTCHA();
+    this._captchaModule = new ClockCAPTCHAView();
     this._captchaModule.inject(document.getElementById('clock-captcha'));
     setTimeout(() => {
       this._ccService.ccInit().subscribe(

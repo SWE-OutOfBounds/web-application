@@ -1,11 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
-import { ClockCAPTCHA } from '../../../../../clock-captcha/dist/index';
+import { ClockCAPTCHAView } from '../../../../../clock-captcha/dist/index';
 import { SessionService } from 'src/app/services/session/session.service';
 import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captcha.service';
 
@@ -18,7 +17,7 @@ import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captch
 export class RegistrationComponent implements OnInit {
   protected _signupForm: FormGroup;
   protected _hide: boolean = true;
-  private _captchaModule: ClockCAPTCHA | null = null;
+  private _captchaModule: ClockCAPTCHAView | null = null;
 
   constructor(
     private _snackBar: MatSnackBar,
@@ -37,11 +36,11 @@ export class RegistrationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._captchaModule = new ClockCAPTCHA();
+    this._captchaModule = new ClockCAPTCHAView();
     this._captchaModule.inject(document.getElementById('clock-captcha'));
     this._ccService.ccInit().subscribe(
       (response) => {
-        this._captchaModule?.fill(response.body.cc_content, response.body.cc_token);
+        response.cc_content && response.cc_token ? this._captchaModule?.fill(response.cc_content, response.cc_token) : null;
       }
     );
 
@@ -60,7 +59,6 @@ export class RegistrationComponent implements OnInit {
         this._captchaModule.getInput())
         .subscribe(result => {
           console.log(result);
-          //this._snackBar.open('Registrazione avvenuta con successo!');
           if (result.okay) {
             this._router.navigate(['/login']);
           } else {
