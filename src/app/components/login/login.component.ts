@@ -16,7 +16,7 @@ import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captch
 export class LoginComponent implements OnInit {
   protected _loginForm: FormGroup;
   protected _hide: boolean = true;
-  private _captchaModule: ClockCAPTCHAView | null = null;
+  private _captchaModule: ClockCAPTCHAView;
 
   constructor(
     private _router: Router,
@@ -24,16 +24,16 @@ export class LoginComponent implements OnInit {
     private _sessionService: SessionService,
     private _ccService: ClockCaptchaService
   ) {
-
     this._loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/)]),
       password: new FormControl('', Validators.required)
     });
 
+    this._captchaModule = new ClockCAPTCHAView();
+
   }
 
   ngOnInit(): void {
-    this._captchaModule = new ClockCAPTCHAView();
     this._captchaModule.inject(document.getElementById('clock-captcha'));
     setTimeout(() => {
       this._ccService.ccInit().subscribe(
@@ -44,6 +44,7 @@ export class LoginComponent implements OnInit {
     }, 2000);
 
   }
+
 
   login(): void {
     if (this._captchaModule?.getInput().length != 5) {
@@ -98,7 +99,7 @@ export class LoginComponent implements OnInit {
                 break;
 
               default:
-                this._snackBar.open("Errore interno al sito. Riprova tra qualche minuto.");
+                this._snackBar.open("Errore interno al sito. Riprova tra qualche minuto.", 'Ok');
                 break;
             }
           }

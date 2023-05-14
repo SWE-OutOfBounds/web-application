@@ -115,13 +115,8 @@
     >
     <mat-icon matSuffix (click)="_hide = !_hide">{{_hide ? 'visibility_off' : 'visibility'}}</mat-icon>
 
-    <!-- <mat-hint>
-      <ul>
-        <li>Password lunga almeno 6 caratteri</li>
-        <li>Password con almeno un carattere minuscolo</li>
-        <li>Password con almeno un carattere Maiuscolo</li>
-      </ul>
-    </mat-hint> -->
+    <!-- <mat-icon matSuffix (click)="showTooltip = !showTooltip">help</mat-icon> -->
+
     <mat-error *ngIf="this._signupForm.get('password')?.hasError('required')">
       Password necessaria per effettuare la registrazione.
     </mat-error>
@@ -130,8 +125,16 @@
     </mat-error>
   </mat-form-field>
 
+  <!-- <div class="tooltip" *ngIf="showTooltip">
+    <ul>
+      <li><mat-icon matSuffix>help</mat-icon> Password lunga almeno 6 caratteri</li>
+      <li>Password con almeno un carattere minuscolo</li>
+      <li>Password con almeno un carattere Maiuscolo</li>
+    </ul>
+  </div> -->
 
-  <div id="clock-captcha"></div>
+  <div id="clock-captcha_signup"></div>
+
   <button mat-raised-button color="primary" type="submit"
     [disabled]="!this._signupForm.valid ? true : false"
     (click) = "signUp()">REGISTRATI</button>

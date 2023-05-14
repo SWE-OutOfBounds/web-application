@@ -17,7 +17,8 @@ import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captch
 export class RegistrationComponent implements OnInit {
   protected _signupForm: FormGroup;
   protected _hide: boolean = true;
-  private _captchaModule: ClockCAPTCHAView | null = null;
+  // protected showTooltip = false;
+  private _captchaModule: ClockCAPTCHAView;
 
   constructor(
     private _snackBar: MatSnackBar,
@@ -33,11 +34,12 @@ export class RegistrationComponent implements OnInit {
       'email': new FormControl(null, [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/)]),
       'password': new FormControl(null, [Validators.required, Validators.minLength(6), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\S]{1,}$/)])
     });
+
+    this._captchaModule = new ClockCAPTCHAView();
   }
 
   ngOnInit(): void {
-    this._captchaModule = new ClockCAPTCHAView();
-    this._captchaModule.inject(document.getElementById('clock-captcha'));
+    this._captchaModule.inject(document.getElementById('clock-captcha_signup'));
     this._ccService.ccInit().subscribe(
       (response) => {
         response.cc_content && response.cc_token ? this._captchaModule?.fill(response.cc_content, response.cc_token) : null;
@@ -58,7 +60,6 @@ export class RegistrationComponent implements OnInit {
         this._captchaModule.getToken(),
         this._captchaModule.getInput())
         .subscribe(result => {
-          console.log(result);
           if (result.okay) {
             this._router.navigate(['/login']);
           } else {
@@ -144,7 +145,7 @@ export class RegistrationComponent implements OnInit {
                     this._captchaModule?.fill(response.cc_content, response.cc_token);
                   }
                 );
-                this._snackBar.open("Errore interno al sito. Riprova tra qualche minuto.");
+                this._snackBar.open("Errore interno al sito. Riprova tra qualche minuto.", 'OK');
                 break;
             }
           }
