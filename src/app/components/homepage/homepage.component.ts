@@ -8,8 +8,10 @@ import { Subscription } from 'rxjs';
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.css']
 })
+
+
 export class HomepageComponent implements OnInit, OnDestroy{
-  //authDetector: boolean = false;
+
   isSessionOpen: boolean = false;
   private userSub: Subscription = new Subscription();
 
@@ -18,29 +20,35 @@ export class HomepageComponent implements OnInit, OnDestroy{
   userEmail: string = "";
 
 
-  constructor(protected _sessionService: SessionService, private _router: Router) {
-    // this.authDetector = this.authService.isLoggedIn();
-    //this.userName = this._sessionService.getUsername();
-    //this.userEmail = this._sessionService.getEmail();
-
-    //let firstLetter = this.userName.slice(0, 1).toUpperCase();
-    //let restOfstring = this.userName.slice(1);
-    //this.userName = firstLetter + restOfstring;
-
-  }
+  constructor(protected _sessionService: SessionService, private _router: Router) { }
 
   ngOnInit(): void {
     this.userSub = this._sessionService.user.subscribe(user => {
+
+      // inizializzo le variabili sulla base del valore utente:
+      // se l'utente è stato definito, considero la sessione aperta e carico i dati dell'utente da visualizzare nella home,
+      // altrimenti la sessione è chiusa e i dati sono valori di default
+
       this.isSessionOpen = !user ? false : true;
+      this.userName = !user ? 'Ospite' : user.name;
+      this.userEmail = !user ? '' : user.email;
     });
   }
 
 
-  logOut() {
+  /**
+   * Effettua il logout dell'utente autenticato, ne cancella i dati ed esegue il refresch della pagina.
+   * Nome e Email vengono riportati ai corrispettivi valori di default
+   */
+  logOut(): void {
+    //chiude la sessione
     this._sessionService.logout();
-    //this.authDetector == false;
+
+    //ripristina i valori di default
     this.userName = "Ospite";
     this.userEmail = "";
+
+    //aggiorna la pagina
     let currentUrl = this._router.url;
     this._router.navigateByUrl('/login', { skipLocationChange: true }).then(() => {
       this._router.navigate([currentUrl]);

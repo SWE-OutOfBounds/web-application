@@ -13,9 +13,11 @@ export class NotAuthGuard implements CanActivate {
 
     return this._sessionService.user.pipe(map(user => {
       if (!user){
+        //la sessione non è aperta per cui la pagina a cui si applica la guardia può essere attiva
         return true;
       }
       else {
+        //sessione già aperta, la pagina a cui si sta tentando di accedere, protetta da guardia, deve essere reindirizzata alla home
         return this._router.parseUrl('');
       }
     }))

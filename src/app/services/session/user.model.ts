@@ -4,6 +4,7 @@
 
 export class User {
   constructor(
+    public name: string,
     public email: string,
     private _sessionToken: string,
     private _tokenExpDate: Date

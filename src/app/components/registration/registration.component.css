@@ -48,13 +48,6 @@ h1 {
   font-size: 1.3em;
 }
 
-.logo-container {
-  padding: 30px 0;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-items: center;
-}
 
 mat-form-field {
   margin: 10px 0;

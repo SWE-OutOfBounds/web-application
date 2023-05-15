@@ -10,7 +10,7 @@ const routes: Routes = [
   {path: '', component: HomepageComponent},
   {path: 'login', component: LoginComponent, canActivate: [NotAuthGuard]},
   {path: 'signup', component: RegistrationComponent, canActivate: [NotAuthGuard]},
-  {path: '**', redirectTo:''},
+  {path: '**', redirectTo:''}, //qualsiasi indirizzo diverso da login e signup viene reindirizzato alla homepage
 ];
 
 @NgModule({

@@ -38,7 +38,7 @@
     flex-flow: row wrap;
     justify-content: center;
     align-items:baseline;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 .fake-topic{
     max-width: 90%;

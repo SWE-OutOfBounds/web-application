@@ -10,6 +10,12 @@ export class ClockCaptchaService {
 
   constructor(private _http: HttpClient) { }
 
+  /**
+   * Inizializza il modulo del clock captcha con l'immagine dell'orologio e il token associato.
+   * @returns Un Observable che emette un oggetto contenente:
+   *          l'immagine del CAPTCHA e il token associato, se la richiesta va a buon fine;
+   *          una variabile booleana impostata a false e il codice di errore, altrimenti.
+   */
   ccInit(): Observable<any> {
     let Headers = new HttpHeaders({
       'Content-Type': 'application/json',

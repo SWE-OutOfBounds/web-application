@@ -1,36 +1,41 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 
 import { environment } from '../../../environments/enviroment';
-import { Observable, map, catchError, of, throwError, Subject, BehaviorSubject } from 'rxjs';
+import { Observable, map, catchError, of, BehaviorSubject } from 'rxjs';
 import { User } from './user.model';
-import { __values } from 'tslib';
+
 
 //Definisco il tipo di risposta che si deve ricevere in fase di login
 export interface LoginResponseData {
-    session_token: string
+    username: string,
+    session_token: string,
+    expiredIn: number
 }
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
-  private email: string | null = null;
-  private uName: string | null = null;
-  private isSessionOpen: boolean = false;
-  private tokenExpirationTimer: any; // devo dare un tempo limite
-  private expireIn: number = 15; // tempo consentito
 
-  // definisco l'utente che dovrà essere aggiornato ogni volta che l'utente effettua un login o un logout
+  // definisco l'utente che dovrà essere aggiornato ogni volta che effettua un login o un logout
   user = new BehaviorSubject<User | null>(null);
+  private tokenExpirationTimer: any;
 
-  constructor(private _http: HttpClient, private _cookieService: CookieService) {
-    //this.email = this._cookieService.get('email');
-    //this.uName = this._cookieService.get('uName');
-  }
+  constructor(private _http: HttpClient, private _cookieService: CookieService) { }
 
+  /**
+   * Utilizza i dati forniti dall'utente per effettuare la chiamata al back end ed eseguire l'accesso dell'utente.
+   *
+   * @param email - Email fornita dall'utente
+   * @param password - Password fornita dall'utente
+   * @param cc_token - Token del clock CAPTCHA
+   * @param cc_input - Input fornito dall'utente nella risoluzione del clock CAPTCHA
+   * @returns Un Observable che emette un oggetto avente due proprietà:
+   *          OKAY: boolan, è vera quando il login è avenuto con successo e falsa se si è verificato un errore durante il login,
+   *          CASE: string, in caso di errore 'case' contiene i dettagli dell'errore generato
+   */
   login(email: string, password: string, cc_token: string, cc_input: string): Observable<any> {
     let Headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -42,17 +47,15 @@ export class SessionService {
         map(response => {
           if(response.status == 200 && response.body){
             // credenziali corrette, utente registrato nel database, per cui creo definisco la sessione dell'utente
-            const _timeEndSession: Date = new Date( new Date().getTime() + this.expireIn*1000 );
-            console.log('orario token in fase di LOGIN: '+_timeEndSession)
-            const loggedUser = new User(email, response.body.session_token, _timeEndSession );
-
+            const _timeEndSession: Date = new Date( new Date().getTime() + response.body.expiredIn * 1000 );
+            const loggedUser = new User(response.body.username, email, response.body.session_token, _timeEndSession );
             this.user.next(loggedUser)
-            this.autoLogout(this.expireIn*1000);
+            this.autoLogout(response.body.expiredIn*1000);
 
             //memorizzo i dati della sessione nei cookies in modo da non perdere l'accesso al ricaricamento della pagina
             this._cookieService.set('user_data', JSON.stringify(this.user));
 
-            this.isSessionOpen = true;
+            // this.isSessionOpen = true;
             return {okay : true};
           }else{
             return {okay : false, case: "???"}
@@ -65,15 +68,23 @@ export class SessionService {
       );
   }
 
+  /**
+   * Consente l'accesso automatico ripristinando i dati dell'utente memorizzati nei cookies.
+   * Se non ci sono dati memorizzati o il token è scaduto la funzione non fa niente,
+   * Se il token è ancora valido, la funzione ripristina i dati e aggiorna il tempo rimanente prima che la sessione scada.
+   *
+   */
   autoLogin(): void{
-    // verifico se l'utente era autenticato co
+
     if(!this._cookieService.get('user_data')){
+      // nessun dato memorizzato per cui utente non autenticato
       return;
     }
 
-    //recupero i dati memorizzati nei cookies
+    // recupera i dati memorizzati
     const storedData: {
       _value: any;
+      name: string,
       email: string,
      _sessionToken: string,
      _tokenExpDate: Date
@@ -81,92 +92,48 @@ export class SessionService {
 
     const storedTime: Date = new Date(storedData._value._tokenExpDate);
 
-    // utente autenticato, ripristino la sessione se il token è ancora valido
     const loadedUser = new User(
+      storedData._value.name,
       storedData._value.email,
       storedData._value._sessionToken,
       storedTime
     );
 
-    // devo controllare che sia effettivamente chi dice di essere?
-
     if(loadedUser.token){
-      // il token non è stato cancellato per cui è ancora valido
+      // token valido
       this.user.next(loadedUser);
-      this.autoLogout(this.expireIn*1000);
+      const expirationDuration = new Date(storedTime).getTime() - new Date().getTime();
+      this.autoLogout(expirationDuration);
+
     }
 
   }
 
+  /**
+   * Effettua il log out dell'utente, cancellandone i dati di sessione memorizzati e interrompendo il timer che porta alla chiusura automatica della sessione
+   */
   logout(): void{
-    // la sessione dell'utente viene annullata
+    // resetta tutti i dati della sessione aperta dall'utente
     this.user.next(null);
     this._cookieService.delete('user_data');
-    console.log('DONE')
 
 
-    //this._cookieService.delete('access_token');
-    //this._cookieService.delete('email');
-    //this._cookieService.delete('uName');
-
-    // this.email = "";
-    // this.uName = "";
-
-    // this.isSessionOpen = false;
-
-    // azzero il timer
+    // interrompe, se presente, il timer che porta alla chiusura automatica della sessione
     if(this.tokenExpirationTimer){
       clearTimeout(this.tokenExpirationTimer);
     }
-
     this.tokenExpirationTimer = null;
-
-
   }
 
-  autoLogout(expirationDuration: number){
+  /**
+   * Imposta un timer per effettuare il log out automatico dell'utente autenticato
+   *
+   * @param expirationDuration - Durata, in millisecondi, dopo la quale verrà effettuato il log out automatico
+   */
+  autoLogout(expirationDuration: number): void{
     this.tokenExpirationTimer = setTimeout(() => {
       this.logout();
     },expirationDuration);
-
   }
 
-  signUp(firstName: string, lastName:string, username: string, email: string, password: string, cc_token: string, cc_input: string): Observable<any>{
-    let Headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'x-secret-key': 'LQbHd5h334ciuy7'
-    });
-
-    return this._http.post<any>(environment.backendLocation + 'users', { firstName, lastName, username, email, password, cc_token, cc_input }, { headers: Headers })
-    .pipe(
-        map(response => {
-          if(response == 'created'){
-          //if(response.status == 201){
-            return {okay : true};
-          }else{
-            return {okay : false, case: "???"}
-          }
-        }),
-        catchError(error => {
-          //4xx and 5xx codes
-          return of({ okay: false, case: error.error.details });
-        })
-      );
-  }
-
-  // isSessionOpen() {
-  //   return true;
-  // cookie se sono aperti tempo scadenza
-  // }
-
-  getSessionStatus(): boolean {
-    return this.isSessionOpen;
-  }
-
-  getEmail(): string {
-    return this.email ? this.email : "";
-  }
-  getUsername(): string {
-    return this.uName ? this.uName : "Ospite";
-  }
 }
