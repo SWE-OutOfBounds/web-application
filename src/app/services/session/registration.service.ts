@@ -4,10 +4,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/enviroment';
 import { Observable, map, catchError, of } from 'rxjs';
 
-//Definisco il tipo di risposta che si deve ricevere in fase di registrazione
-export interface SignUpResponseData {
-    details: string
-}
+// //Definisco il tipo di risposta che si deve ricevere in fase di registrazione
+// export interface SignUpResponse {
+//     details: string
+// }
 
 
 @Injectable({
@@ -35,7 +35,7 @@ export class RegistrationService {
       'x-secret-key': 'LQbHd5h334ciuy7'
     });
 
-    return this._http.post<SignUpResponseData>(environment.backendLocation + 'users', { firstName, lastName, username, email, password, cc_token, cc_input }, { headers: Headers })
+    return this._http.post<any>(environment.backendLocation + 'users', { firstName, lastName, username, email, password, cc_token, cc_input }, { headers: Headers })
     .pipe(
         map(response => {
           if(response.details == 'CREATED'){

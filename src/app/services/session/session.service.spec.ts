@@ -1,16 +1,247 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { CookieService } from 'ngx-cookie-service';
+import { of } from 'rxjs'
 
+import { environment } from '../../../environments/enviroment';
 import { SessionService } from './session.service';
+import { User } from './user.model';
 
-describe('AuthService', () => {
+describe('SessionService', () => {
   let service: SessionService;
+  let httpMock: HttpTestingController;
+  let cookieService: CookieService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [CookieService, SessionService]
+    });
     service = TestBed.inject(SessionService);
+    httpMock = TestBed.inject(HttpTestingController);
+    cookieService = TestBed.inject(CookieService);
+
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+    cookieService.deleteAll();
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
-});
+
+  describe('login', () => {
+    const email = 'johndoe@example.com';
+    const password = 'password123';
+    const cc_token = 'token123';
+    const cc_input = 'input123';
+
+    // verifico quando login ha successo
+    it('should return an object with okay true if the response status is 200 and response body exists', () => {
+      const mockResponse = {
+          username: 'testName',
+          session_token: 'session_token_value',
+          expiredIn: 3600
+      };
+
+      spyOn(service.user, 'next');
+      spyOn(service, 'autoLogout');
+      spyOn(cookieService, 'set').and.stub();
+
+      service.login(email, password, cc_token, cc_input).subscribe(response => {
+        //test su sessione utente
+        expect(service.user.next).toHaveBeenCalledWith(jasmine.objectContaining({
+          name: mockResponse.username,
+          email: email,
+          _sessionToken: mockResponse.session_token,
+          _tokenExpDate: jasmine.any(Date)
+        }));
+        //test la chiamata ad autoLogout
+        expect(service.autoLogout).toHaveBeenCalledWith(mockResponse.expiredIn * 1000);
+        //test salvataggio dati nei cookies
+        expect(cookieService.set).toHaveBeenCalledWith('user_data', jasmine.any(String));
+        //test se ritorna effettivamente okay: true
+        expect(response).toEqual({ okay: true });
+      });
+
+      const req = httpMock.expectOne(`${environment.backendLocation}session`);
+      expect(req.request.method).toBe('POST');
+      req.flush(mockResponse);
+    });
+
+    //test in caso di errore 400
+    it('should return an object with okay false and the error case if the response status is 400', () => {
+      const mockResponse = {
+          details: 'SOME_ERROR'
+      };
+
+      spyOn(service.user, 'next');
+      spyOn(service, 'autoLogout');
+      spyOn(cookieService, 'set').and.stub();
+
+      service.login(email, password, cc_token, cc_input).subscribe(response => {
+        expect(response).toEqual({ okay: false, case: 'SOME_ERROR' });
+        expect(service.user.next).not.toHaveBeenCalled();
+        expect(service.autoLogout).not.toHaveBeenCalled();
+        expect(cookieService.set).not.toHaveBeenCalled();
+      });
+
+      const req = httpMock.expectOne(`${environment.backendLocation}session`);
+      expect(req.request.method).toBe('POST');
+      req.flush(mockResponse, {status: 400, statusText: 'Bad Request'})
+    });
+
+    //test in caso di errore 500
+    it('should return an object with okay false and the error case if the response status is 500', () => {
+      const mockErrorResponse = {
+          details: 'INTERNAL_SERVER_ERROR'
+      };
+
+      spyOn(service.user, 'next');
+      spyOn(service, 'autoLogout');
+      spyOn(cookieService, 'set').and.stub();
+
+      service.login(email, password, cc_token, cc_input).subscribe((response) => {
+        expect(response).toEqual({ okay: false, case: 'INTERNAL_SERVER_ERROR' });
+        expect(service.user.next).not.toHaveBeenCalled();
+        expect(service.autoLogout).not.toHaveBeenCalled();
+        expect(cookieService.set).not.toHaveBeenCalled();
+      });
+
+      const req = httpMock.expectOne(`${environment.backendLocation}session`);
+      expect(req.request.method).toBe('POST');
+      req.flush(mockErrorResponse, { status: 500, statusText: 'Internal Server Error' });
+    });
+  });
+
+  describe('autoLogin', ()=>{
+    //quando ci sono dati nei cookies e token ancora valido
+    it('should auto login user if user data is stored in cookie', () => {
+      const storedData = {
+        _value: {
+          name: 'testName',
+          email: 'test@example.com',
+          _sessionToken: 'session_token_value',
+          _tokenExpDate: new Date(new Date().getTime() + 3600000)
+        }
+      };
+      spyOn(cookieService, 'get').and.returnValue(JSON.stringify(storedData));
+      const loadedUser = new User(
+        storedData._value.name,
+        storedData._value.email,
+        storedData._value._sessionToken,
+        new Date(storedData._value._tokenExpDate)
+      );
+      spyOn(service.user, 'next');
+      spyOn(service, 'autoLogout');
+
+      service.autoLogin();
+
+      expect(cookieService.get).toHaveBeenCalledWith('user_data');
+      expect(service.user.next).toHaveBeenCalledWith(loadedUser);
+      expect(service.autoLogout).toHaveBeenCalledWith(jasmine.any(Number));
+    });
+
+    // test quando non ci sono dati
+    it('should not auto login user if no user data is stored in cookie', () => {
+      spyOn(cookieService, 'get').and.returnValue('');
+      spyOn(service.user, 'next');
+      spyOn(service, 'autoLogout');
+
+      service.autoLogin();
+
+      expect(cookieService.get).toHaveBeenCalledWith('user_data');
+      expect(service.user.next).not.toHaveBeenCalled();
+      expect(service.autoLogout).not.toHaveBeenCalled();
+    });
+
+    it('should not auto login user if user data without valid token is stored in cookie', () => {
+      const storedData = {
+        _value: {
+          name: 'testName',
+          email: 'johndoe@example.com',
+          _sessionToken: 'invalid_token',
+          _tokenExpDate: new Date(new Date().getTime() - 5000000) //token scaduto
+        }
+      };
+
+      spyOn(cookieService, 'get').and.returnValue(JSON.stringify(storedData));
+      const loadedUser = new User(
+        storedData._value.name,
+        storedData._value.email,
+        storedData._value._sessionToken,
+        new Date(storedData._value._tokenExpDate)
+      );
+
+      spyOn(service.user, 'next');
+      spyOn(service, 'autoLogout');
+
+      service.autoLogin();
+
+      expect(cookieService.get).toHaveBeenCalledWith('user_data');
+      expect(service.user.next).not.toHaveBeenCalled();
+      expect(service.autoLogout).not.toHaveBeenCalled();
+    });
+
+  });
+
+  describe('logout', ()=>{
+    it('should logout user and reset session data', () => {
+      spyOn(service.user, 'next');
+      spyOn(cookieService, 'delete');
+      spyOn(service as any, 'clearTokenExpirationTimer');
+
+      service.logout();
+
+      expect(service.user.next).toHaveBeenCalledWith(null);
+      expect(cookieService.delete).toHaveBeenCalledWith('user_data');
+      expect((service as any).clearTokenExpirationTimer).toHaveBeenCalled();
+    });
+  });
+
+  describe('autoLogout', () => {
+    let tokenExpirationTimer: NodeJS.Timeout | null;
+    let logoutSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      // Reset the timer and create a spy on the logout method
+      tokenExpirationTimer = null;
+      logoutSpy = jasmine.createSpy('logout');
+    });
+
+    afterEach(() => {
+      // Clear the timer after each test
+      if (tokenExpirationTimer !== null) {
+        clearTimeout(tokenExpirationTimer);
+      }
+    });
+
+    it('should call logout after the expiration duration', (done) => {
+      const expirationDuration = 500; // Set the expiration duration in milliseconds
+
+      // Call the autoLogout method
+      autoLogout(expirationDuration);
+
+      // Wait for the expiration duration plus a buffer time (e.g., 100ms)
+      setTimeout(() => {
+        // Expect the logout method to have been called
+        expect(logoutSpy).toHaveBeenCalled();
+
+        done(); // Notify Jasmine that the asynchronous test has completed
+      }, expirationDuration + 100);
+    });
+
+    function autoLogout(expirationDuration: number) {
+      tokenExpirationTimer = setTimeout(() => {
+        logoutSpy();
+      }, expirationDuration);
+    }
+  });
+
+
+
+})
+
+

@@ -8,11 +8,11 @@ import { User } from './user.model';
 
 
 //Definisco il tipo di risposta che si deve ricevere in fase di login
-export interface LoginResponseData {
-    username: string,
-    session_token: string,
-    expiredIn: number
-}
+// export interface LoginResponseData {
+//     username: string,
+//     session_token: string,
+//     expiredIn: number
+// }
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +42,7 @@ export class SessionService {
       'x-secret-key': 'LQbHd5h334ciuy7'
     });
 
-    return this._http.post<LoginResponseData>(environment.backendLocation + 'session', { email, password, cc_token, cc_input }, { headers: Headers, observe: 'response'})
+    return this._http.post<any>(environment.backendLocation + 'session', { email, password, cc_token, cc_input }, { headers: Headers, observe: 'response'})
       .pipe(
         map(response => {
           if(response.status == 200 && response.body){
@@ -55,7 +55,6 @@ export class SessionService {
             //memorizzo i dati della sessione nei cookies in modo da non perdere l'accesso al ricaricamento della pagina
             this._cookieService.set('user_data', JSON.stringify(this.user));
 
-            // this.isSessionOpen = true;
             return {okay : true};
           }else{
             return {okay : false, case: "???"}
@@ -119,10 +118,11 @@ export class SessionService {
 
 
     // interrompe, se presente, il timer che porta alla chiusura automatica della sessione
-    if(this.tokenExpirationTimer){
-      clearTimeout(this.tokenExpirationTimer);
-    }
-    this.tokenExpirationTimer = null;
+    // if(this.tokenExpirationTimer){
+    //   clearTimeout(this.tokenExpirationTimer);
+    // }
+    // this.tokenExpirationTimer = null;
+    this.clearTokenExpirationTimer();
   }
 
   /**
@@ -136,4 +136,10 @@ export class SessionService {
     },expirationDuration);
   }
 
+  private clearTokenExpirationTimer(): void {
+    if (this.tokenExpirationTimer) {
+      clearTimeout(this.tokenExpirationTimer);
+    }
+    this.tokenExpirationTimer = null;
+  }
 }
