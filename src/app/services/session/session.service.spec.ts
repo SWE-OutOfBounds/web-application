@@ -168,13 +168,6 @@ describe('SessionService', () => {
       };
 
       spyOn(cookieService, 'get').and.returnValue(JSON.stringify(storedData));
-      const loadedUser = new User(
-        storedData._value.name,
-        storedData._value.email,
-        storedData._value._sessionToken,
-        new Date(storedData._value._tokenExpDate)
-      );
-
       spyOn(service.user, 'next');
       spyOn(service, 'autoLogout');
 
@@ -206,30 +199,27 @@ describe('SessionService', () => {
     let logoutSpy: jasmine.Spy;
 
     beforeEach(() => {
-      // Reset the timer and create a spy on the logout method
+      // Reset il timer e crea un spy per il metodo logout
       tokenExpirationTimer = null;
       logoutSpy = jasmine.createSpy('logout');
     });
 
     afterEach(() => {
-      // Clear the timer after each test
+      // Pulisce il timer dopo ogni test
       if (tokenExpirationTimer !== null) {
         clearTimeout(tokenExpirationTimer);
       }
     });
 
     it('should call logout after the expiration duration', (done) => {
-      const expirationDuration = 500; // Set the expiration duration in milliseconds
+      const expirationDuration = 500;
 
-      // Call the autoLogout method
       autoLogout(expirationDuration);
 
-      // Wait for the expiration duration plus a buffer time (e.g., 100ms)
       setTimeout(() => {
-        // Expect the logout method to have been called
         expect(logoutSpy).toHaveBeenCalled();
 
-        done(); // Notify Jasmine that the asynchronous test has completed
+        done();
       }, expirationDuration + 100);
     });
 

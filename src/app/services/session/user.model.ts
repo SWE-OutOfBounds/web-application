@@ -7,7 +7,7 @@ export class User {
    * Costruttore del modello che ne definisce le proprietà che ogni utente autenticato deve possedere
    *
    * @param name Nome con cui l'utente ha scelto di farsi chiamare dal sistema
-   * @param email Indirizzo email fornita dall'utente
+   * @param email Indirizzo email fornito dall'utente
    * @param _sessionToken Token di sessione
    * @param _tokenExpDate Data e orario di scadenza del token
    */

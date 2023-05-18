@@ -4,30 +4,30 @@ describe('User', () => {
   let user: User;
 
   beforeEach(() => {
-    // Create a new User instance before each test
-    const tokenExpDate = new Date(); // Set the token expiration date
-    tokenExpDate.setHours(tokenExpDate.getHours() + 1); // Add 1 hour to the current time
+    // Crea una nuova istanza di Utente prima di ogni test
+    const tokenExpDate = new Date(); // imposta la scadenza del token di sessione
+    tokenExpDate.setHours(tokenExpDate.getHours() + 1); // aggiunge 1 ora alla scadenza
     user = new User('John Doe', 'john@example.com', 'sessionToken', tokenExpDate);
   });
 
   it('should return null if the token is expired', () => {
-    // Set the token expiration date to a past date
+    // Imposta la scadenza del token ad una data già trascorsa
     user['_tokenExpDate'] = new Date(2022, 0, 1);
 
-    // Expect the token getter to return null
+    // Il token ritornato dovrebbe essere nullo
     expect(user.token).toBeNull();
   });
 
   it('should return the session token if it is still valid', () => {
-    // Expect the token getter to return the session token
+    // Il token creato per il test è valido per cui dovrebbe ritornare il token di sessione impostato nel test
     expect(user.token).toBe('sessionToken');
   });
 
   it('should return null if the token expiration date is not set', () => {
-    // Set the token expiration date to null
+    // Elimina la scadenza del token
     user['_tokenExpDate'] = null;
 
-    // Expect the token getter to return null
+    // La funzione dovrebbe ritornare il valore nullo
     expect(user.token).toBeNull();
   });
 });
