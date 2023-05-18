@@ -1,0 +1,839 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>web-application-poc documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">web-application-poc documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Injectables</li>
+  <li >SessionService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#info" role="tab" id="info-tab" data-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li >
+            <a href="#source" role="tab" id="source-tab" data-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="c-info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/services/session/session.service.ts</code>
+        </p>
+
+
+
+
+
+            <section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#tokenExpirationTimer" >tokenExpirationTimer</a>
+                            </li>
+                            <li>
+                                <a href="#user" >user</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#autoLogin" >autoLogin</a>
+                            </li>
+                            <li>
+                                <a href="#autoLogout" >autoLogout</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#clearTokenExpirationTimer" >clearTokenExpirationTimer</a>
+                            </li>
+                            <li>
+                                <a href="#login" >login</a>
+                            </li>
+                            <li>
+                                <a href="#logout" >logout</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(_http: <a href="https://angular.io/api/common/http/HttpClient" target="_blank">HttpClient</a>, _cookieService: CookieService)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/services/session/session.service.ts:36</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Costruttore del servizio di Sessione</p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>_http</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://angular.io/api/common/http/HttpClient" target="_blank" >HttpClient</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>Consente la gestione delle chiamate al backend</p>
+
+                                                        </td>
+                                                </tr>
+                                                <tr>
+                                                        <td>_cookieService</td>
+                                                  
+                                                        <td>
+                                                                    <code>CookieService</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>Consente la memorizzazione e il recupero dei dati nei cookies</p>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section>
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="autoLogin"></a>
+                    <span class="name">
+                        <span ><b>autoLogin</b></span>
+                        <a href="#autoLogin"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>autoLogin()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="94"
+                            class="link-to-prism">src/app/services/session/session.service.ts:94</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Consente l&#39;accesso automatico ripristinando i dati dell&#39;utente memorizzati nei cookies.
+Se non ci sono dati memorizzati o il token è scaduto la funzione non fa niente,
+Se il token è ancora valido, la funzione ripristina i dati e aggiorna il tempo rimanente prima che la sessione scada.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="autoLogout"></a>
+                    <span class="name">
+                        <span ><b>autoLogout</b></span>
+                        <a href="#autoLogout"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>autoLogout(expirationDuration: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="146"
+                            class="link-to-prism">src/app/services/session/session.service.ts:146</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Imposta un timer per effettuare il log out automatico dell&#39;utente autenticato</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Description</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>expirationDuration</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
+                                        <ul>
+<li>Durata, in millisecondi, dopo la quale verrà effettuato il log out automatico</li>
+</ul>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="clearTokenExpirationTimer"></a>
+                    <span class="name">
+                        <span class="modifier">Private</span>
+                        <span ><b>clearTokenExpirationTimer</b></span>
+                        <a href="#clearTokenExpirationTimer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>clearTokenExpirationTimer()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="155"
+                            class="link-to-prism">src/app/services/session/session.service.ts:155</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>metodo che serve per resettare il timer di fine sessione</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="login"></a>
+                    <span class="name">
+                        <span ><b>login</b></span>
+                        <a href="#login"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>login(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, password: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, cc_token: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, cc_input: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="57"
+                            class="link-to-prism">src/app/services/session/session.service.ts:57</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Utilizza i dati forniti dall&#39;utente per effettuare la chiamata al back end ed eseguire l&#39;accesso dell&#39;utente.</p>
+<div><pre class="line-numbers"><code class="language-none">     OKAY: boolan, è vera quando il login è avenuto con successo e falsa se si è verificato un errore durante il login,
+     CASE: string, in caso di errore &#39;case&#39; contiene i dettagli dell&#39;errore generato</code></pre></div></div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Description</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>email</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
+                                        <ul>
+<li>Email fornita dall&#39;utente</li>
+</ul>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>password</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
+                                        <ul>
+<li>Password fornita dall&#39;utente</li>
+</ul>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>cc_token</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
+                                        <ul>
+<li>Token del clock CAPTCHA</li>
+</ul>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>cc_input</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
+                                        <ul>
+<li>Input fornito dall&#39;utente nella risoluzione del clock CAPTCHA</li>
+</ul>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>Observable&lt;any&gt;</code>
+
+                    </div>
+                    <div class="io-description">
+                        <p>Un Observable che emette un oggetto avente due proprietà:
+OKAY: boolan, è vera quando il login è avenuto con successo e falsa se si è verificato un errore durante il login,
+CASE: string, in caso di errore &#39;case&#39; contiene i dettagli dell&#39;errore generato</p>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logout"></a>
+                    <span class="name">
+                        <span ><b>logout</b></span>
+                        <a href="#logout"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>logout()</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="132"
+                            class="link-to-prism">src/app/services/session/session.service.ts:132</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Effettua il log out dell&#39;utente, cancellandone i dati di sessione memorizzati e interrompendo il timer che porta alla chiusura automatica della sessione</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section>
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="tokenExpirationTimer"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>tokenExpirationTimer</b></span>
+                        <a href="#tokenExpirationTimer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/services/session/session.service.ts:36</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="user"></a>
+                    <span class="name">
+                        <span ><b>user</b></span>
+                        <a href="#user"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;User | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/services/session/session.service.ts:35</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="c-source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
+import { HttpClient, HttpHeaders, HttpResponse } from &#x27;@angular/common/http&#x27;;
+import { CookieService } from &#x27;ngx-cookie-service&#x27;;
+
+import { environment } from &#x27;../../../environments/enviroment&#x27;;
+import { Observable, map, catchError, of, BehaviorSubject } from &#x27;rxjs&#x27;;
+import { User } from &#x27;./user.model&#x27;;
+
+/**
+ * Interfaccia che definisce il tipo di risposta fornita dal backend in fase di accesso al sistema
+ */
+export interface LoginResponse {
+  /**
+   * Nome utente definito in fase di registrazione
+   */
+  username: string,
+  /**
+   * Token per la gestione della sessione utente
+   */
+  session_token: string,
+  /**
+   * Tempo di validità del token prima della sua scadenza
+   */
+  expiredIn: number
+}
+
+@Injectable({
+  providedIn: &#x27;root&#x27;
+})
+/**
+ * Servizio che consente l&#x27;apertura e chiusura di sessione dell&#x27;utente che si sta autenticando
+ */
+export class SessionService {
+
+  user &#x3D; new BehaviorSubject&lt;User | null&gt;(null);
+  private tokenExpirationTimer: any;
+
+  /**
+   * Costruttore del servizio di Sessione
+   *
+   * @param _http Consente la gestione delle chiamate al backend
+   * @param _cookieService Consente la memorizzazione e il recupero dei dati nei cookies
+   */
+  constructor(private _http: HttpClient, private _cookieService: CookieService) { }
+
+  /**
+   * Utilizza i dati forniti dall&#x27;utente per effettuare la chiamata al back end ed eseguire l&#x27;accesso dell&#x27;utente.
+   *
+   * @param email - Email fornita dall&#x27;utente
+   * @param password - Password fornita dall&#x27;utente
+   * @param cc_token - Token del clock CAPTCHA
+   * @param cc_input - Input fornito dall&#x27;utente nella risoluzione del clock CAPTCHA
+   * @returns Un Observable che emette un oggetto avente due proprietà:
+   *          OKAY: boolan, è vera quando il login è avenuto con successo e falsa se si è verificato un errore durante il login,
+   *          CASE: string, in caso di errore &#x27;case&#x27; contiene i dettagli dell&#x27;errore generato
+   */
+  login(email: string, password: string, cc_token: string, cc_input: string): Observable&lt;any&gt; {
+    let Headers &#x3D; new HttpHeaders({
+      &#x27;Content-Type&#x27;: &#x27;application/json&#x27;,
+      &#x27;x-secret-key&#x27;: &#x27;LQbHd5h334ciuy7&#x27;
+    });
+
+    return this._http.post&lt;LoginResponse&gt;(environment.backendLocation + &#x27;session&#x27;, { email, password, cc_token, cc_input }, { headers: Headers, observe: &#x27;response&#x27;})
+      .pipe(
+        map(response &#x3D;&gt; {
+          if(response.status &#x3D;&#x3D; 200 &amp;&amp; response.body){
+            // credenziali corrette, utente registrato nel database, per cui creo definisco la sessione dell&#x27;utente
+            const _timeEndSession: Date &#x3D; new Date( new Date().getTime() + response.body.expiredIn * 1000 );
+            const loggedUser &#x3D; new User(response.body.username, email, response.body.session_token, _timeEndSession );
+            this.user.next(loggedUser)
+            this.autoLogout(response.body.expiredIn*1000);
+
+            //memorizzo i dati della sessione nei cookies in modo da non perdere l&#x27;accesso al ricaricamento della pagina
+            this._cookieService.set(&#x27;user_data&#x27;, JSON.stringify(this.user));
+
+            return {okay : true};
+          }else{
+            return {okay : false, case: &quot;???&quot;}
+          }
+        }),
+        catchError(error &#x3D;&gt; {
+          //4xx and 5xx codes
+          return of({ okay: false, case: error.error.details });
+        })
+      );
+  }
+
+  /**
+   * Consente l&#x27;accesso automatico ripristinando i dati dell&#x27;utente memorizzati nei cookies.
+   * Se non ci sono dati memorizzati o il token è scaduto la funzione non fa niente,
+   * Se il token è ancora valido, la funzione ripristina i dati e aggiorna il tempo rimanente prima che la sessione scada.
+   *
+   */
+  autoLogin(): void{
+
+    if(!this._cookieService.get(&#x27;user_data&#x27;)){
+      // nessun dato memorizzato per cui utente non autenticato
+      return;
+    }
+
+    // recupera i dati memorizzati e li ripristina
+    const storedData: {
+      _value: any;
+      name: string,
+      email: string,
+     _sessionToken: string,
+     _tokenExpDate: Date
+    } &#x3D; JSON.parse(this._cookieService.get(&#x27;user_data&#x27;));
+
+    const storedTime: Date &#x3D; new Date(storedData._value._tokenExpDate);
+
+    const loadedUser &#x3D; new User(
+      storedData._value.name,
+      storedData._value.email,
+      storedData._value._sessionToken,
+      storedTime
+    );
+
+    if(loadedUser.token){
+      // token valido
+      this.user.next(loadedUser);
+      const expirationDuration &#x3D; new Date(storedTime).getTime() - new Date().getTime();
+      this.autoLogout(expirationDuration);
+
+    }
+
+  }
+
+  /**
+   * Effettua il log out dell&#x27;utente, cancellandone i dati di sessione memorizzati e interrompendo il timer che porta alla chiusura automatica della sessione
+   */
+  logout(): void{
+    // resetta tutti i dati della sessione aperta dall&#x27;utente
+    this.user.next(null);
+    this._cookieService.delete(&#x27;user_data&#x27;);
+
+    // interrompe, se presente, il timer che porta alla chiusura automatica della sessione
+    this.clearTokenExpirationTimer();
+  }
+
+  /**
+   * Imposta un timer per effettuare il log out automatico dell&#x27;utente autenticato
+   *
+   * @param expirationDuration - Durata, in millisecondi, dopo la quale verrà effettuato il log out automatico
+   */
+  autoLogout(expirationDuration: number): void{
+    this.tokenExpirationTimer &#x3D; setTimeout(() &#x3D;&gt; {
+      this.logout();
+    },expirationDuration);
+  }
+
+  /**
+   * metodo che serve per resettare il timer di fine sessione
+   */
+  private clearTokenExpirationTimer(): void {
+    if (this.tokenExpirationTimer) {
+      clearTimeout(this.tokenExpirationTimer);
+    }
+    this.tokenExpirationTimer &#x3D; null;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SessionService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

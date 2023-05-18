@@ -4,10 +4,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/enviroment';
 import { Observable, map, catchError, of } from 'rxjs';
 
-// //Definisco il tipo di risposta che si deve ricevere in fase di registrazione
-// export interface SignUpResponse {
-//     details: string
-// }
+/**
+ * Interfaccia che definisce il tipo di risposta che si deve ricevere in fase di registrazione
+ */
+export interface SignUpResponse {
+  /**
+   * Messaggio descrittivo che accompagna lo stato di risposta ricevuto dal backend in fase di registrazione
+   */
+    details: string
+}
 
 
 @Injectable({
@@ -15,6 +20,11 @@ import { Observable, map, catchError, of } from 'rxjs';
 })
 export class RegistrationService {
 
+  /**
+   * Costruttore del servizio di Registrazione
+   *
+   * @param _http Consente la gestione delle chiamate al backend
+   */
   constructor(private _http: HttpClient) { }
 
   /**
@@ -35,7 +45,7 @@ export class RegistrationService {
       'x-secret-key': 'LQbHd5h334ciuy7'
     });
 
-    return this._http.post<any>(environment.backendLocation + 'users', { firstName, lastName, username, email, password, cc_token, cc_input }, { headers: Headers })
+    return this._http.post<SignUpResponse>(environment.backendLocation + 'users', { firstName, lastName, username, email, password, cc_token, cc_input }, { headers: Headers })
     .pipe(
         map(response => {
           if(response.details == 'CREATED'){

@@ -6,23 +6,41 @@ import { environment } from '../../../environments/enviroment';
 import { Observable, map, catchError, of, BehaviorSubject } from 'rxjs';
 import { User } from './user.model';
 
-
-//Definisco il tipo di risposta che si deve ricevere in fase di login
-// export interface LoginResponseData {
-//     username: string,
-//     session_token: string,
-//     expiredIn: number
-// }
+/**
+ * Interfaccia che definisce il tipo di risposta fornita dal backend in fase di accesso al sistema
+ */
+export interface LoginResponse {
+  /**
+   * Nome utente definito in fase di registrazione
+   */
+  username: string,
+  /**
+   * Token per la gestione della sessione utente
+   */
+  session_token: string,
+  /**
+   * Tempo di validità del token prima della sua scadenza
+   */
+  expiredIn: number
+}
 
 @Injectable({
   providedIn: 'root'
 })
+/**
+ * Servizio che consente l'apertura e chiusura di sessione dell'utente che si sta autenticando
+ */
 export class SessionService {
 
-  // definisco l'utente che dovrà essere aggiornato ogni volta che effettua un login o un logout
   user = new BehaviorSubject<User | null>(null);
   private tokenExpirationTimer: any;
 
+  /**
+   * Costruttore del servizio di Sessione
+   *
+   * @param _http Consente la gestione delle chiamate al backend
+   * @param _cookieService Consente la memorizzazione e il recupero dei dati nei cookies
+   */
   constructor(private _http: HttpClient, private _cookieService: CookieService) { }
 
   /**
@@ -42,7 +60,7 @@ export class SessionService {
       'x-secret-key': 'LQbHd5h334ciuy7'
     });
 
-    return this._http.post<any>(environment.backendLocation + 'session', { email, password, cc_token, cc_input }, { headers: Headers, observe: 'response'})
+    return this._http.post<LoginResponse>(environment.backendLocation + 'session', { email, password, cc_token, cc_input }, { headers: Headers, observe: 'response'})
       .pipe(
         map(response => {
           if(response.status == 200 && response.body){
@@ -80,7 +98,7 @@ export class SessionService {
       return;
     }
 
-    // recupera i dati memorizzati
+    // recupera i dati memorizzati e li ripristina
     const storedData: {
       _value: any;
       name: string,
@@ -116,12 +134,7 @@ export class SessionService {
     this.user.next(null);
     this._cookieService.delete('user_data');
 
-
     // interrompe, se presente, il timer che porta alla chiusura automatica della sessione
-    // if(this.tokenExpirationTimer){
-    //   clearTimeout(this.tokenExpirationTimer);
-    // }
-    // this.tokenExpirationTimer = null;
     this.clearTokenExpirationTimer();
   }
 
@@ -136,6 +149,9 @@ export class SessionService {
     },expirationDuration);
   }
 
+  /**
+   * metodo che serve per resettare il timer di fine sessione
+   */
   private clearTokenExpirationTimer(): void {
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);

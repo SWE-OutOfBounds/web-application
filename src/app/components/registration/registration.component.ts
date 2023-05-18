@@ -8,7 +8,9 @@ import { ClockCAPTCHAView } from '../../../../../clock-captcha/dist/index';
 import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captcha.service';
 import { RegistrationService } from 'src/app/services/session/registration.service';
 
-
+/**
+ * Componente che definisce e gestisce la pagina di registrazione.
+ */
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.component.html',
@@ -19,6 +21,14 @@ export class RegistrationComponent implements OnInit {
   protected _hide: boolean = true;
   private _captchaModule: ClockCAPTCHAView;
 
+  /**
+   * Costruttore della componente di registrazione
+   *
+   * @param _snackBar Consente la visualizzazione di messaggi tramite Snackbar
+   * @param _router Consente la navigazione tra le pagine
+   * @param _registrationService Consente di gestire la registrazione dell'utente
+   * @param _ccService Consente la gestione del clock CAPTCHA
+   */
   constructor(
     private _snackBar: MatSnackBar,
     private _router: Router,
@@ -37,6 +47,9 @@ export class RegistrationComponent implements OnInit {
     this._captchaModule = new ClockCAPTCHAView();
   }
 
+  /**
+   * Inizializza il clock CAPTCHA
+   */
   ngOnInit(): void {
     this._captchaModule.inject(document.getElementById('clock-captcha_signup'));
     this._ccService.ccInit().subscribe(

@@ -8,6 +8,11 @@ import { environment } from 'src/environments/enviroment';
 })
 export class ClockCaptchaService {
 
+  /**
+   * Costruttore del servizio che gestisce il clock CAPTCHA
+   *
+   * @param _http Consente la gestione delle chiamate al backend
+   */
   constructor(private _http: HttpClient) { }
 
   /**
