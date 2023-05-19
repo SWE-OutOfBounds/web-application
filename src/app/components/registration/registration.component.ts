@@ -17,8 +17,17 @@ import { RegistrationService } from 'src/app/services/session/registration.servi
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent implements OnInit {
+  /**
+   * Form per raccogliere i dati della registrazione utente
+   */
   protected _signupForm: FormGroup;
+  /**
+   * Interruttore che consente all'utente di attivare la modalità password in chiaro
+   */
   protected _hide: boolean = true;
+  /**
+   * Modulo del clock CAPTCHA
+   */
   private _captchaModule: ClockCAPTCHAView;
 
   /**
@@ -116,7 +125,7 @@ export class RegistrationComponent implements OnInit {
                 break;
               case 'INVALID_FORMAT_EMAIL':
                 this.regenerateCaptcha();
-                this._signupForm.get('email')?.setErrors({ email: true });
+                this._signupForm.get('email')?.setErrors({ pattern: true });
                 break;
               case 'INVALID_FORMAT_PASSWORD':
                 this.regenerateCaptcha();
