@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import {
   HttpClientTestingModule,
   HttpTestingController,
@@ -230,41 +230,19 @@ describe('SessionService', () => {
   });
 
   describe('autoLogout', () => {
-    let tokenExpirationTimer: NodeJS.Timeout | null;
-    let logoutSpy: jasmine.Spy;
-
-    beforeEach(() => {
-      // Reset il timer e crea un spy per il metodo logout
-      tokenExpirationTimer = null;
-      logoutSpy = jasmine.createSpy('logout');
-    });
-
-    afterEach(() => {
-      // Pulisce il timer dopo ogni test
-      if (tokenExpirationTimer !== null) {
-        clearTimeout(tokenExpirationTimer);
-      }
-    });
-
     /**
      * Verifica che la funzione di log out venga correttamente chiamata al momento della scadenza del token
      */
-    it('should call logout after the expiration duration', (done) => {
-      const expirationDuration = 500;
+    it('should call logout after expiration duration', fakeAsync(() => {
+      const expirationDuration = 3000; // 3 secondi
 
-      autoLogout(expirationDuration);
+      spyOn(service, 'logout');
 
-      setTimeout(() => {
-        expect(logoutSpy).toHaveBeenCalled();
+      service.autoLogout(expirationDuration);
 
-        done();
-      }, expirationDuration + 100);
-    });
+      tick(expirationDuration);
 
-    function autoLogout(expirationDuration: number) {
-      tokenExpirationTimer = setTimeout(() => {
-        logoutSpy();
-      }, expirationDuration);
-    }
+      expect(service.logout).toHaveBeenCalled();
+    }));
   });
 });
