@@ -174,8 +174,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="24"
-                            class="link-to-prism">src/app/services/clock-captcha/clock-captcha.service.ts:24</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="23"
+                            class="link-to-prism">src/app/services/clock-captcha/clock-captcha.service.ts:23</a></div>
                 </td>
             </tr>
 
@@ -215,16 +215,15 @@ import { Observable, map, catchError, of, throwError } from &#x27;rxjs&#x27;;
 import { environment } from &#x27;src/environments/enviroment&#x27;;
 
 @Injectable({
-  providedIn: &#x27;root&#x27;
+  providedIn: &#x27;root&#x27;,
 })
 export class ClockCaptchaService {
-
   /**
    * Costruttore del servizio che gestisce il clock CAPTCHA
    *
    * @param _http Consente la gestione delle chiamate al backend
    */
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient) {}
 
   /**
    * Inizializza il modulo del clock captcha con l&#x27;immagine dell&#x27;orologio e il token associato.
@@ -238,19 +237,22 @@ export class ClockCaptchaService {
       &#x27;x-secret-key&#x27;: environment.cc_key,
     });
 
-    return this._http.get&lt;any&gt;(environment.backendLocation + &#x27;clock-captcha&#x27;, { headers: Headers, observe: &#x27;response&#x27; })
+    return this._http
+      .get&lt;any&gt;(environment.backendLocation + &#x27;clock-captcha&#x27;, {
+        headers: Headers,
+        observe: &#x27;response&#x27;,
+      })
       .pipe(
-        map(response &#x3D;&gt; {
+        map((response) &#x3D;&gt; {
           return {
             cc_content: response.body.image,
-            cc_token: response.body.token
+            cc_token: response.body.token,
           };
         }),
-        catchError(error &#x3D;&gt; {
+        catchError((error) &#x3D;&gt; {
           console.log(error);
           return of({ success: false, status: error.status });
         })
-
       );
   }
 }

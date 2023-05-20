@@ -164,21 +164,19 @@ export interface SignUpResponse {
   /**
    * Messaggio descrittivo che accompagna lo stato di risposta ricevuto dal backend in fase di registrazione
    */
-    details: string
+  details: string;
 }
 
-
 @Injectable({
-  providedIn: &#x27;root&#x27;
+  providedIn: &#x27;root&#x27;,
 })
 export class RegistrationService {
-
   /**
    * Costruttore del servizio di Registrazione
    *
    * @param _http Consente la gestione delle chiamate al backend
    */
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient) {}
 
   /**
    * Effettua la chiamata al backend per creare l&#x27;account di un nuovo utente
@@ -192,28 +190,40 @@ export class RegistrationService {
    * @param cc_input - Input fornito dall&#x27;utente nella risoluzione del clock CAPTCHA
    * @returns Un Observable che si risolve in un oggetto che indica l&#x27;esito, positivo o negativo, dell&#x27;operazione di registrazione.
    */
-  signUp(firstName: string, lastName:string, username: string, email: string, password: string, cc_token: string, cc_input: string): Observable&lt;any&gt;{
+  signUp(
+    firstName: string,
+    lastName: string,
+    username: string,
+    email: string,
+    password: string,
+    cc_token: string,
+    cc_input: string
+  ): Observable&lt;any&gt; {
     let Headers &#x3D; new HttpHeaders({
       &#x27;Content-Type&#x27;: &#x27;application/json&#x27;,
-      &#x27;x-secret-key&#x27;: &#x27;LQbHd5h334ciuy7&#x27;
+      &#x27;x-secret-key&#x27;: &#x27;LQbHd5h334ciuy7&#x27;,
     });
 
-    return this._http.post&lt;SignUpResponse&gt;(environment.backendLocation + &#x27;users&#x27;, { firstName, lastName, username, email, password, cc_token, cc_input }, { headers: Headers })
-    .pipe(
-        map(response &#x3D;&gt; {
-          if(response.details &#x3D;&#x3D; &#x27;CREATED&#x27;){
-            return {okay : true};
-          }else{
-            return {okay : false, case: &quot;???&quot;}
+    return this._http
+      .post&lt;SignUpResponse&gt;(
+        environment.backendLocation + &#x27;users&#x27;,
+        { firstName, lastName, username, email, password, cc_token, cc_input },
+        { headers: Headers }
+      )
+      .pipe(
+        map((response) &#x3D;&gt; {
+          if (response.details &#x3D;&#x3D; &#x27;CREATED&#x27;) {
+            return { okay: true };
+          } else {
+            return { okay: false, case: &#x27;???&#x27; };
           }
         }),
-        catchError(error &#x3D;&gt; {
+        catchError((error) &#x3D;&gt; {
           //4xx and 5xx codes
           return of({ okay: false, case: error.error.details });
         })
       );
   }
-
 }
 </code></pre>
     </div>

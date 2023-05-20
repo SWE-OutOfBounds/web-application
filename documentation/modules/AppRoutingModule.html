@@ -74,24 +74,28 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NgModule } from &#x27;@angular/core&#x27;;
 import { RouterModule, Routes } from &#x27;@angular/router&#x27;;
-import { NotAuthGuard } from &#x27;./guards/not-auth.guard&#x27;
+import { NotAuthGuard } from &#x27;./guards/not-auth.guard&#x27;;
 
 import { HomepageComponent } from &#x27;./components/homepage/homepage.component&#x27;;
 import { LoginComponent } from &#x27;./components/login/login.component&#x27;;
 import { RegistrationComponent } from &#x27;./components/registration/registration.component&#x27;;
 
 const routes: Routes &#x3D; [
-  {path: &#x27;&#x27;, component: HomepageComponent},
-  {path: &#x27;login&#x27;, component: LoginComponent, canActivate: [NotAuthGuard]},
-  {path: &#x27;signup&#x27;, component: RegistrationComponent, canActivate: [NotAuthGuard]},
-  {path: &#x27;**&#x27;, redirectTo:&#x27;&#x27;}, //qualsiasi indirizzo diverso da login e signup viene reindirizzato alla homepage
+  { path: &#x27;&#x27;, component: HomepageComponent },
+  { path: &#x27;login&#x27;, component: LoginComponent, canActivate: [NotAuthGuard] },
+  {
+    path: &#x27;signup&#x27;,
+    component: RegistrationComponent,
+    canActivate: [NotAuthGuard],
+  },
+  { path: &#x27;**&#x27;, redirectTo: &#x27;&#x27; }, //qualsiasi indirizzo diverso da login e signup viene reindirizzato alla homepage
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
 </code></pre>
     </div>
 </div>

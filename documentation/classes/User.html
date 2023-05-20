@@ -183,7 +183,7 @@
                                                     </td>
                                                     
                                                         <td>
-                                                                <p>Indirizzo email fornita dall&#39;utente</p>
+                                                                <p>Indirizzo email fornito dall&#39;utente</p>
 
                                                         </td>
                                                 </tr>
@@ -253,13 +253,13 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/session/user.model.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/services/session/user.model.ts:15</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description">Indirizzo email fornita dall'utente</div>
+                    <div class="io-description">Indirizzo email fornito dall'utente</div>
                 </td>
             </tr>
 
@@ -285,7 +285,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/services/session/user.model.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/services/session/user.model.ts:14</a></div>
                         </td>
                     </tr>
 
@@ -325,7 +325,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/services/session/user.model.ts:25</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/services/session/user.model.ts:23</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -344,12 +344,11 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export class User {
-
   /**
    * Costruttore del modello che ne definisce le proprietà che ogni utente autenticato deve possedere
    *
    * @param name Nome con cui l&#x27;utente ha scelto di farsi chiamare dal sistema
-   * @param email Indirizzo email fornita dall&#x27;utente
+   * @param email Indirizzo email fornito dall&#x27;utente
    * @param _sessionToken Token di sessione
    * @param _tokenExpDate Data e orario di scadenza del token
    */
@@ -360,15 +359,14 @@
     private _tokenExpDate: Date | null
   ) {}
 
-
   /**
    * Restituisce il token di sessione dell&#x27;utente solo quando è valido.
    */
-  get token(){
-     const currentTime: Date &#x3D; new Date();
+  get token() {
+    const currentTime: Date &#x3D; new Date();
 
     //se il token non è mai stato generato oppure è scaduto il token di sessione sarà nullo
-    if(!this._tokenExpDate || currentTime &gt; this._tokenExpDate){
+    if (!this._tokenExpDate || currentTime &gt; this._tokenExpDate) {
       return null;
     }
 

@@ -107,7 +107,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/guards/not-auth.guard.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/guards/not-auth.guard.ts:20</a></div>
                             </td>
                         </tr>
 
@@ -193,8 +193,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="32"
-                            class="link-to-prism">src/app/guards/not-auth.guard.ts:32</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="41"
+                            class="link-to-prism">src/app/guards/not-auth.guard.ts:41</a></div>
                 </td>
             </tr>
 
@@ -274,12 +274,18 @@ Se la sessione è aperta, la pagina sottoposta a guardia verrà reindirizzata ve
 
         <div class="tab-pane fade  tab-source-code" id="c-source">
             <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from &#x27;@angular/router&#x27;;
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  Router,
+  RouterStateSnapshot,
+  UrlTree,
+} from &#x27;@angular/router&#x27;;
 import { Observable, map } from &#x27;rxjs&#x27;;
 import { SessionService } from &#x27;../services/session/session.service&#x27;;
 
 @Injectable({
-  providedIn: &#x27;root&#x27;
+  providedIn: &#x27;root&#x27;,
 })
 /**
  * Guardia che serve a gestire:
@@ -293,7 +299,10 @@ export class NotAuthGuard implements CanActivate {
    * @param _sessionService Consente di accedere ai dati di sessione per verificarne l&#x27;apertura
    * @param _router Consente di modificare la navigazione in caso di utente autenticato
    */
-  constructor(private _sessionService: SessionService, private _router: Router) { }
+  constructor(
+    private _sessionService: SessionService,
+    private _router: Router
+  ) {}
 
   /**
    * Determina quando una route può essere attivata sulla base della sessione utente:
@@ -304,24 +313,22 @@ export class NotAuthGuard implements CanActivate {
    * @param state RouterStateSnapshot contiene informazioni sulla route corrente
    * @returns Un Observable che indica quando la route può essere attivata o quando deve essere reindirizzata
    */
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable&lt;boolean | UrlTree&gt; {
-
-    return this._sessionService.user.pipe(map(user &#x3D;&gt; {
-      if (!user){
-        //la sessione non è aperta per cui la pagina a cui si applica la guardia può essere attiva
-        return true;
-      }
-      else {
-        //sessione già aperta, la pagina a cui si sta tentando di accedere, protetta da guardia, deve essere reindirizzata alla home
-        return this._router.parseUrl(&#x27;&#x27;);
-      }
-    }))
-
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable&lt;boolean | UrlTree&gt; {
+    return this._sessionService.user.pipe(
+      map((user) &#x3D;&gt; {
+        if (!user) {
+          return true;
+        } else {
+          //sessione già attiva reindirizza alla home page
+          return this._router.parseUrl(&#x27;&#x27;);
+        }
+      })
+    );
   }
-
-  }
-
-
+}
 </code></pre>
         </div>
 </div>

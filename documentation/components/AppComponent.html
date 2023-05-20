@@ -242,8 +242,8 @@ rappresenta il livello più alto da cui ha origine l&#39;applicazione</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="32"
-                            class="link-to-prism">src/app/app.component.ts:32</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="31"
+                            class="link-to-prism">src/app/app.component.ts:31</a></div>
                 </td>
             </tr>
 
@@ -268,7 +268,7 @@ ristabilire la sessione già aperta dell&#39;utente</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit} from &#x27;@angular/core&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit } from &#x27;@angular/core&#x27;;
 import { SessionService } from &#x27;./services/session/session.service&#x27;;
 
 /**
@@ -286,14 +286,13 @@ import { SessionService } from &#x27;./services/session/session.service&#x27;;
   - se la sessione era aperta, quindi dati presenti nei cookies, la funzione autoLogin caricherà i dati dell&#x27;utente,
   - se la sessione era chiusa, quindi nessun dato nei cookies, la funzione autoLogin ritornerà null e l&#x27;utente risulterà come ospite non autenticato.
 */
-export class AppComponent implements OnInit{
-
+export class AppComponent implements OnInit {
   /**
    * Costruttore di app.component responsabile dell&#x27;avvio dell&#x27;applicazione
    *
    * @param _sessionService servizio che gestisce la sessione dell&#x27;utente
    */
-  constructor(private _sessionService: SessionService){}
+  constructor(private _sessionService: SessionService) {}
 
   /**
    * In fase di inizializzazione il servizio di sessione avvia la funzione di autoLogin per verificare ed eventualmente
@@ -303,7 +302,6 @@ export class AppComponent implements OnInit{
     this._sessionService.autoLogin();
   }
 }
-
 </code></pre>
     </div>
 

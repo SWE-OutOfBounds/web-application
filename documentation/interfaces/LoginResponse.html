@@ -256,25 +256,24 @@ export interface LoginResponse {
   /**
    * Nome utente definito in fase di registrazione
    */
-  username: string,
+  username: string;
   /**
    * Token per la gestione della sessione utente
    */
-  session_token: string,
+  session_token: string;
   /**
    * Tempo di validità del token prima della sua scadenza
    */
-  expiredIn: number
+  expiredIn: number;
 }
 
 @Injectable({
-  providedIn: &#x27;root&#x27;
+  providedIn: &#x27;root&#x27;,
 })
 /**
  * Servizio che consente l&#x27;apertura e chiusura di sessione dell&#x27;utente che si sta autenticando
  */
 export class SessionService {
-
   user &#x3D; new BehaviorSubject&lt;User | null&gt;(null);
   private tokenExpirationTimer: any;
 
@@ -284,7 +283,10 @@ export class SessionService {
    * @param _http Consente la gestione delle chiamate al backend
    * @param _cookieService Consente la memorizzazione e il recupero dei dati nei cookies
    */
-  constructor(private _http: HttpClient, private _cookieService: CookieService) { }
+  constructor(
+    private _http: HttpClient,
+    private _cookieService: CookieService
+  ) {}
 
   /**
    * Utilizza i dati forniti dall&#x27;utente per effettuare la chiamata al back end ed eseguire l&#x27;accesso dell&#x27;utente.
@@ -297,31 +299,48 @@ export class SessionService {
    *          OKAY: boolan, è vera quando il login è avenuto con successo e falsa se si è verificato un errore durante il login,
    *          CASE: string, in caso di errore &#x27;case&#x27; contiene i dettagli dell&#x27;errore generato
    */
-  login(email: string, password: string, cc_token: string, cc_input: string): Observable&lt;any&gt; {
+  login(
+    email: string,
+    password: string,
+    cc_token: string,
+    cc_input: string
+  ): Observable&lt;any&gt; {
     let Headers &#x3D; new HttpHeaders({
       &#x27;Content-Type&#x27;: &#x27;application/json&#x27;,
-      &#x27;x-secret-key&#x27;: &#x27;LQbHd5h334ciuy7&#x27;
+      &#x27;x-secret-key&#x27;: &#x27;LQbHd5h334ciuy7&#x27;,
     });
 
-    return this._http.post&lt;LoginResponse&gt;(environment.backendLocation + &#x27;session&#x27;, { email, password, cc_token, cc_input }, { headers: Headers, observe: &#x27;response&#x27;})
+    return this._http
+      .post&lt;LoginResponse&gt;(
+        environment.backendLocation + &#x27;session&#x27;,
+        { email, password, cc_token, cc_input },
+        { headers: Headers, observe: &#x27;response&#x27; }
+      )
       .pipe(
-        map(response &#x3D;&gt; {
-          if(response.status &#x3D;&#x3D; 200 &amp;&amp; response.body){
+        map((response) &#x3D;&gt; {
+          if (response.status &#x3D;&#x3D; 200 &amp;&amp; response.body) {
             // credenziali corrette, utente registrato nel database, per cui creo definisco la sessione dell&#x27;utente
-            const _timeEndSession: Date &#x3D; new Date( new Date().getTime() + response.body.expiredIn * 1000 );
-            const loggedUser &#x3D; new User(response.body.username, email, response.body.session_token, _timeEndSession );
-            this.user.next(loggedUser)
-            this.autoLogout(response.body.expiredIn*1000);
+            const _timeEndSession: Date &#x3D; new Date(
+              new Date().getTime() + response.body.expiredIn * 1000
+            );
+            const loggedUser &#x3D; new User(
+              response.body.username,
+              email,
+              response.body.session_token,
+              _timeEndSession
+            );
+            this.user.next(loggedUser);
+            this.autoLogout(response.body.expiredIn * 1000);
 
             //memorizzo i dati della sessione nei cookies in modo da non perdere l&#x27;accesso al ricaricamento della pagina
             this._cookieService.set(&#x27;user_data&#x27;, JSON.stringify(this.user));
 
-            return {okay : true};
-          }else{
-            return {okay : false, case: &quot;???&quot;}
+            return { okay: true };
+          } else {
+            return { okay: false, case: &#x27;???&#x27; };
           }
         }),
-        catchError(error &#x3D;&gt; {
+        catchError((error) &#x3D;&gt; {
           //4xx and 5xx codes
           return of({ okay: false, case: error.error.details });
         })
@@ -334,9 +353,8 @@ export class SessionService {
    * Se il token è ancora valido, la funzione ripristina i dati e aggiorna il tempo rimanente prima che la sessione scada.
    *
    */
-  autoLogin(): void{
-
-    if(!this._cookieService.get(&#x27;user_data&#x27;)){
+  autoLogin(): void {
+    if (!this._cookieService.get(&#x27;user_data&#x27;)) {
       // nessun dato memorizzato per cui utente non autenticato
       return;
     }
@@ -344,10 +362,10 @@ export class SessionService {
     // recupera i dati memorizzati e li ripristina
     const storedData: {
       _value: any;
-      name: string,
-      email: string,
-     _sessionToken: string,
-     _tokenExpDate: Date
+      name: string;
+      email: string;
+      _sessionToken: string;
+      _tokenExpDate: Date;
     } &#x3D; JSON.parse(this._cookieService.get(&#x27;user_data&#x27;));
 
     const storedTime: Date &#x3D; new Date(storedData._value._tokenExpDate);
@@ -359,20 +377,19 @@ export class SessionService {
       storedTime
     );
 
-    if(loadedUser.token){
+    if (loadedUser.token) {
       // token valido
       this.user.next(loadedUser);
-      const expirationDuration &#x3D; new Date(storedTime).getTime() - new Date().getTime();
+      const expirationDuration &#x3D;
+        new Date(storedTime).getTime() - new Date().getTime();
       this.autoLogout(expirationDuration);
-
     }
-
   }
 
   /**
    * Effettua il log out dell&#x27;utente, cancellandone i dati di sessione memorizzati e interrompendo il timer che porta alla chiusura automatica della sessione
    */
-  logout(): void{
+  logout(): void {
     // resetta tutti i dati della sessione aperta dall&#x27;utente
     this.user.next(null);
     this._cookieService.delete(&#x27;user_data&#x27;);
@@ -386,10 +403,10 @@ export class SessionService {
    *
    * @param expirationDuration - Durata, in millisecondi, dopo la quale verrà effettuato il log out automatico
    */
-  autoLogout(expirationDuration: number): void{
+  autoLogout(expirationDuration: number): void {
     this.tokenExpirationTimer &#x3D; setTimeout(() &#x3D;&gt; {
       this.logout();
-    },expirationDuration);
+    }, expirationDuration);
   }
 
   /**
