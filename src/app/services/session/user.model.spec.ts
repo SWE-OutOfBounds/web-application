@@ -1,4 +1,4 @@
-import { User } from "./user.model";
+import { User } from './user.model';
 
 describe('User', () => {
   let user: User;
@@ -7,7 +7,12 @@ describe('User', () => {
     // Crea una nuova istanza di Utente prima di ogni test
     const tokenExpDate = new Date(); // imposta la scadenza del token di sessione
     tokenExpDate.setHours(tokenExpDate.getHours() + 1); // aggiunge 1 ora alla scadenza
-    user = new User('John Doe', 'john@example.com', 'sessionToken', tokenExpDate);
+    user = new User(
+      'John Doe',
+      'john@example.com',
+      'sessionToken',
+      tokenExpDate
+    );
   });
 
   it('should return null if the token is expired', () => {

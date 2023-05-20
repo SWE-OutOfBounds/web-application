@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SessionService } from './services/session/session.service';
 
 /**
@@ -16,14 +16,13 @@ import { SessionService } from './services/session/session.service';
   - se la sessione era aperta, quindi dati presenti nei cookies, la funzione autoLogin caricherà i dati dell'utente,
   - se la sessione era chiusa, quindi nessun dato nei cookies, la funzione autoLogin ritornerà null e l'utente risulterà come ospite non autenticato.
 */
-export class AppComponent implements OnInit{
-
+export class AppComponent implements OnInit {
   /**
    * Costruttore di app.component responsabile dell'avvio dell'applicazione
    *
    * @param _sessionService servizio che gestisce la sessione dell'utente
    */
-  constructor(private _sessionService: SessionService){}
+  constructor(private _sessionService: SessionService) {}
 
   /**
    * In fase di inizializzazione il servizio di sessione avvia la funzione di autoLogin per verificare ed eventualmente
@@ -33,4 +32,3 @@ export class AppComponent implements OnInit{
     this._sessionService.autoLogin();
   }
 }
-

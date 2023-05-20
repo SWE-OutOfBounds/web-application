@@ -1,8 +1,7 @@
 /**
  * Si definisce un modello per raccogliere i dati relativi all'utente che ha effettuato l'accesso all'applicazione
-*/
+ */
 export class User {
-
   /**
    * Costruttore del modello che ne definisce le proprietà che ogni utente autenticato deve possedere
    *
@@ -18,15 +17,14 @@ export class User {
     private _tokenExpDate: Date | null
   ) {}
 
-
   /**
    * Restituisce il token di sessione dell'utente solo quando è valido.
    */
-  get token(){
-     const currentTime: Date = new Date();
+  get token() {
+    const currentTime: Date = new Date();
 
     //se il token non è mai stato generato oppure è scaduto il token di sessione sarà nullo
-    if(!this._tokenExpDate || currentTime > this._tokenExpDate){
+    if (!this._tokenExpDate || currentTime > this._tokenExpDate) {
       return null;
     }
 

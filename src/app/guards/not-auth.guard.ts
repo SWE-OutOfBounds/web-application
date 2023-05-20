@@ -1,10 +1,16 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  Router,
+  RouterStateSnapshot,
+  UrlTree,
+} from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { SessionService } from '../services/session/session.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 /**
  * Guardia che serve a gestire:
@@ -18,7 +24,10 @@ export class NotAuthGuard implements CanActivate {
    * @param _sessionService Consente di accedere ai dati di sessione per verificarne l'apertura
    * @param _router Consente di modificare la navigazione in caso di utente autenticato
    */
-  constructor(private _sessionService: SessionService, private _router: Router) { }
+  constructor(
+    private _sessionService: SessionService,
+    private _router: Router
+  ) {}
 
   /**
    * Determina quando una route può essere attivata sulla base della sessione utente:
@@ -29,21 +38,19 @@ export class NotAuthGuard implements CanActivate {
    * @param state RouterStateSnapshot contiene informazioni sulla route corrente
    * @returns Un Observable che indica quando la route può essere attivata o quando deve essere reindirizzata
    */
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
-
-    return this._sessionService.user.pipe(map(user => {
-      if (!user){
-        //la sessione non è aperta per cui la pagina a cui si applica la guardia può essere attiva
-        return true;
-      }
-      else {
-        //sessione già aperta, la pagina a cui si sta tentando di accedere, protetta da guardia, deve essere reindirizzata alla home
-        return this._router.parseUrl('');
-      }
-    }))
-
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> {
+    return this._sessionService.user.pipe(
+      map((user) => {
+        if (!user) {
+          return true;
+        } else {
+          //sessione già attiva reindirizza alla home page
+          return this._router.parseUrl('');
+        }
+      })
+    );
   }
-
-  }
-
-
+}

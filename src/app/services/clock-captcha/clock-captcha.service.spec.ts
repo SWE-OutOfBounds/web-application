@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 
 import { ClockCaptchaService } from './clock-captcha.service';
 import { environment } from 'src/environments/enviroment';
-
 
 describe('ClockCaptchaService', () => {
   let service: ClockCaptchaService;
@@ -12,7 +14,7 @@ describe('ClockCaptchaService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [ClockCaptchaService]
+      providers: [ClockCaptchaService],
     });
 
     service = TestBed.inject(ClockCaptchaService);
@@ -28,10 +30,13 @@ describe('ClockCaptchaService', () => {
   });
 
   describe('#ccInit', () => {
+    /**
+     * Verifica della funzione ccInit nel caso di successo
+     */
     it('should return an Observable with clock captcha image and token', () => {
       const mockResponse = {
         image: 'https://example.com/clock-captcha.png',
-        token: 'abc123'
+        token: 'abc123',
       };
 
       service.ccInit().subscribe((response: any) => {
@@ -39,11 +44,16 @@ describe('ClockCaptchaService', () => {
         expect(response.cc_token).toEqual(mockResponse.token);
       });
 
-      const req = httpMock.expectOne(environment.backendLocation + 'clock-captcha');
+      const req = httpMock.expectOne(
+        environment.backendLocation + 'clock-captcha'
+      );
       expect(req.request.method).toBe('GET');
       req.flush(mockResponse);
     });
 
+    /**
+     * Verifica della funzione ccInit nel caso di fallimento
+     */
     it('should return an Observable with error if HTTP request fails', () => {
       const mockError = { status: 404, statusText: 'Not Found' };
 
@@ -52,7 +62,9 @@ describe('ClockCaptchaService', () => {
         expect(response.status).toEqual(mockError.status);
       });
 
-      const req = httpMock.expectOne(environment.backendLocation + 'clock-captcha');
+      const req = httpMock.expectOne(
+        environment.backendLocation + 'clock-captcha'
+      );
       expect(req.request.method).toBe('GET');
       req.flush(null, mockError);
     });

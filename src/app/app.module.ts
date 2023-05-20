@@ -23,7 +23,7 @@ import { LogoComponent } from './components/logo/logo.component';
     HomepageComponent,
     LoginComponent,
     RegistrationComponent,
-    LogoComponent
+    LogoComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,9 +36,9 @@ import { LogoComponent } from './components/logo/logo.component';
     MatIconModule,
     HttpClientModule,
     MatSnackBarModule,
-    MatCardModule
+    MatCardModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

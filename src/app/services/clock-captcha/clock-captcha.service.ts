@@ -4,16 +4,15 @@ import { Observable, map, catchError, of, throwError } from 'rxjs';
 import { environment } from 'src/environments/enviroment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ClockCaptchaService {
-
   /**
    * Costruttore del servizio che gestisce il clock CAPTCHA
    *
    * @param _http Consente la gestione delle chiamate al backend
    */
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient) {}
 
   /**
    * Inizializza il modulo del clock captcha con l'immagine dell'orologio e il token associato.
@@ -27,19 +26,22 @@ export class ClockCaptchaService {
       'x-secret-key': environment.cc_key,
     });
 
-    return this._http.get<any>(environment.backendLocation + 'clock-captcha', { headers: Headers, observe: 'response' })
+    return this._http
+      .get<any>(environment.backendLocation + 'clock-captcha', {
+        headers: Headers,
+        observe: 'response',
+      })
       .pipe(
-        map(response => {
+        map((response) => {
           return {
             cc_content: response.body.image,
-            cc_token: response.body.token
+            cc_token: response.body.token,
           };
         }),
-        catchError(error => {
+        catchError((error) => {
           console.log(error);
           return of({ success: false, status: error.status });
         })
-
       );
   }
 }
