@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HomepageComponent } from './homepage.component';
 import { SessionService } from '../../services/session/session.service';
@@ -7,8 +12,6 @@ import { User } from 'src/app/services/session/user.model';
 import { Router } from '@angular/router';
 import { LoginComponent } from '../login/login.component';
 
-
-
 describe('HomepageComponent', () => {
   let component: HomepageComponent;
   let fixture: ComponentFixture<HomepageComponent>;
@@ -16,19 +19,19 @@ describe('HomepageComponent', () => {
   let sessionServiceMock: SessionService;
   let router: Router;
 
-
   beforeEach(() => {
     sessionServiceMock = jasmine.createSpyObj('SessionService', ['logout']);
     //definisco l'utente per il test della sottoscrizione
     sessionServiceMock.user = new BehaviorSubject<User | null>(null);
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([
-        {path: '', component:HomepageComponent},
-        {path: 'login', component:LoginComponent}])],
-      providers: [
-        { provide: SessionService, useValue: sessionServiceMock}
-      ]
+      imports: [
+        RouterTestingModule.withRoutes([
+          { path: '', component: HomepageComponent },
+          { path: 'login', component: LoginComponent },
+        ]),
+      ],
+      providers: [{ provide: SessionService, useValue: sessionServiceMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomepageComponent);
@@ -38,17 +41,16 @@ describe('HomepageComponent', () => {
     component['userSub'] = sessionServiceMock.user.subscribe();
   });
 
-  afterEach(()=>{
+  afterEach(() => {
     fixture.destroy();
-  })
+  });
 
   // Test costruttore
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('OnInit', ()=>{
-
+  describe('OnInit', () => {
     it('should initialize properties with user value when data are available', () => {
       const userMock = new User(
         'Marione',
@@ -57,7 +59,6 @@ describe('HomepageComponent', () => {
         new Date()
       );
       sessionServiceMock.user.next(userMock);
-
 
       component.ngOnInit();
 
@@ -75,16 +76,19 @@ describe('HomepageComponent', () => {
       expect(component.userName).toBe('Ospite');
       expect(component.userEmail).toBe('');
     });
+  });
 
-  })
-
-  it('should log out and refresh page', fakeAsync(()=>{
+  it('should log out and refresh page', fakeAsync(() => {
     component.userName = 'Mario';
     component.userEmail = 'example@test.com';
     component.currentUrl = '';
 
-    const navigateByUrlSpy = spyOn(router, 'navigateByUrl').and.returnValue(Promise.resolve(true));
-    const navigateSpy = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+    const navigateByUrlSpy = spyOn(router, 'navigateByUrl').and.returnValue(
+      Promise.resolve(true)
+    );
+    const navigateSpy = spyOn(router, 'navigate').and.returnValue(
+      Promise.resolve(true)
+    );
 
     component.logOut();
 
@@ -94,9 +98,10 @@ describe('HomepageComponent', () => {
 
     tick();
 
-    expect(navigateByUrlSpy).toHaveBeenCalledWith('/login', { skipLocationChange: true });
+    expect(navigateByUrlSpy).toHaveBeenCalledWith('/login', {
+      skipLocationChange: true,
+    });
     expect(navigateSpy).toHaveBeenCalledWith([component.currentUrl]);
-
   }));
 
   it('should unsubscribe from user subscription', () => {
@@ -106,8 +111,4 @@ describe('HomepageComponent', () => {
 
     expect(component['userSub'].unsubscribe).toHaveBeenCalled();
   });
-
 });
-
-
-

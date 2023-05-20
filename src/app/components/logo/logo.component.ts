@@ -7,20 +7,17 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-logo',
   templateUrl: './logo.component.html',
-  styleUrls: ['./logo.component.css']
+  styleUrls: ['./logo.component.css'],
 })
-
-export class LogoComponent implements OnInit{
-
+export class LogoComponent implements OnInit {
   /**
    * La componente non ha alcuna dipedenza, il costruttore viene solamente dichiarato
    */
-  constructor(){}
+  constructor() {}
 
   /**
    * Essendo logo una componente ausiliare per gestire la creazione dell'immagine del logo, non è necessaria
    * alcuna inizializzazione
    */
-  ngOnInit(): void{ }
-
+  ngOnInit(): void {}
 }

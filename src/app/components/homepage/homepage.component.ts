@@ -11,12 +11,9 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-homepage',
   templateUrl: './homepage.component.html',
-  styleUrls: ['./homepage.component.css']
+  styleUrls: ['./homepage.component.css'],
 })
-
-
-export class HomepageComponent implements OnInit, OnDestroy{
-
+export class HomepageComponent implements OnInit, OnDestroy {
   /**
    * Indica se la sessione è aperta
    */
@@ -34,19 +31,18 @@ export class HomepageComponent implements OnInit, OnDestroy{
   backGroundImage: string = 'url(../../assets/images/defaultProfilePic.png)';
   /**
    * Nome utente che può avere:
-   * valore di default in caso di utente non autenticato,
-   * nome scelto dall'utente in caso di sessione aperta.
+   * un valore di default in caso di utente non autenticato,
+   * oppure il nome scelto dall'utente in caso di sessione aperta.
    */
-  userName: string = "";
+  userName: string = '';
   /**
    * Indirizzo email. Esso contiene un valore solo quando l'utente ha eseguito l'accesso.
    */
-  userEmail: string = "";
+  userEmail: string = '';
   /**
    * Indirizzo corrente della navigazione.
    */
   currentUrl = this._router.url;
-
 
   /**
    * Costruttore della pagina di home
@@ -54,21 +50,23 @@ export class HomepageComponent implements OnInit, OnDestroy{
    * @param _sessionService Consente il recupero e la gestione dei dati di sessione
    * @param _router Consente di gestire la navigazione tra le pagine
    */
-  constructor(protected _sessionService: SessionService, private _router: Router) { }
+  constructor(
+    protected _sessionService: SessionService,
+    private _router: Router
+  ) {}
 
   /**
-   * inizializza le variabili sulla base del valore utente:
+   * Inizializza le variabili sulla base del valore utente:
    * Se l'utente è stato definito, considera la sessione aperta e carica i dati dell'utente da visualizzare nella home.
    * Se l'utente non è stato defnito la sessione è chiusa e i dati utente vengono inizializzati con valori di default.
    */
   ngOnInit(): void {
-    this.userSub = this._sessionService.user.subscribe(user => {
+    this.userSub = this._sessionService.user.subscribe((user) => {
       this.isSessionOpen = !user ? false : true;
       this.userName = !user ? 'Ospite' : user.name;
       this.userEmail = !user ? '' : user.email;
     });
   }
-
 
   /**
    * Effettua il log out dell'utente autenticato, ne cancella i dati ed esegue il refresch della pagina.
@@ -79,13 +77,15 @@ export class HomepageComponent implements OnInit, OnDestroy{
     this._sessionService.logout();
 
     //ripristina i valori di default
-    this.userName = "Ospite";
-    this.userEmail = "";
+    this.userName = 'Ospite';
+    this.userEmail = '';
 
     //aggiorna la pagina
-    this._router.navigateByUrl('/login', { skipLocationChange: true }).then(() => {
-      this._router.navigate([this.currentUrl]);
-    });
+    this._router
+      .navigateByUrl('/login', { skipLocationChange: true })
+      .then(() => {
+        this._router.navigate([this.currentUrl]);
+      });
   }
 
   /**

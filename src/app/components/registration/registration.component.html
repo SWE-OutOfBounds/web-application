@@ -8,7 +8,8 @@
       matInput
       type="text"
       placeholder="Mario"
-      formControlName="firstName">
+      formControlName="firstName"
+    />
 
     <mat-error *ngIf="this._signupForm.get('firstName')?.hasError('required')">
       Nome necessario per effettuare la registrazione.
@@ -24,14 +25,15 @@
       matInput
       type="text"
       placeholder="Rossi"
-      formControlName="lastName">
+      formControlName="lastName"
+    />
 
-      <mat-error *ngIf="this._signupForm.get('lastName')?.hasError('required')">
-        Cognome necessario per effettuare la registrazione.
-      </mat-error>
-      <mat-error *ngIf="this._signupForm.get('lastName')?.hasError('pattern')">
-        Formato cognome non valido.
-      </mat-error>
+    <mat-error *ngIf="this._signupForm.get('lastName')?.hasError('required')">
+      Cognome necessario per effettuare la registrazione.
+    </mat-error>
+    <mat-error *ngIf="this._signupForm.get('lastName')?.hasError('pattern')">
+      Formato cognome non valido.
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
@@ -40,7 +42,8 @@
       matInput
       type="text"
       placeholder="DalìTheBest"
-      formControlName="username">
+      formControlName="username"
+    />
 
     <mat-error *ngIf="this._signupForm.get('username')?.hasError('required')">
       Username necessario per effettuare la registrazione.
@@ -53,7 +56,8 @@
       matInput
       type="text"
       placeholder="La tua email"
-      formControlName="email">
+      formControlName="email"
+    />
 
     <mat-error *ngIf="this._signupForm.get('email')?.hasError('required')">
       Email necessaria per effettuare la registrazione.
@@ -62,11 +66,12 @@
       Inserisci una email valida.
     </mat-error>
 
-    <mat-error *ngIf="this._signupForm.get('email')?.hasError('alreadyExisted')">
+    <mat-error
+      *ngIf="this._signupForm.get('email')?.hasError('alreadyExisted')"
+    >
       Email già in uso.
     </mat-error>
   </mat-form-field>
-
 
   <mat-form-field appearance="outline">
     <mat-label>Password</mat-label>
@@ -75,25 +80,39 @@
       [type]="_hide ? 'password' : 'text'"
       placeholder="La tua password"
       formControlName="password"
-    >
-    <mat-icon matSuffix (click)="_hide = !_hide">{{_hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    />
+    <mat-icon matSuffix (click)="_hide = !_hide">{{
+      _hide ? "visibility_off" : "visibility"
+    }}</mat-icon>
 
     <mat-error *ngIf="this._signupForm.get('password')?.hasError('required')">
       Password necessaria per effettuare la registrazione.
     </mat-error>
     <mat-error *ngIf="this._signupForm.get('password')?.hasError('pattern')">
-      La password deve avere almeno 8 caratteri, almeno un carattere minuscolo, almeno un carattere maiuscolo e almeno un numero
+      La password deve avere almeno 8 caratteri, almeno un carattere minuscolo,
+      almeno un carattere maiuscolo e almeno un numero
     </mat-error>
   </mat-form-field>
 
   <div id="clock-captcha_signup"></div>
 
-  <button mat-raised-button color="primary" type="submit"
+  <div *ngIf="errorMessage" class="error">
+    <h3>Tempus Fugit</h3>
+    <p>{{ errorMessage }}</p>
+    <a routerLink="">Torna alla Home</a>
+  </div>
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
     [disabled]="!this._signupForm.valid ? true : false"
-    (click) = "signUp()">REGISTRATI</button>
+    (click)="signUp()"
+  >
+    REGISTRATI
+  </button>
 
   <div class="switchPage">
     <p>Sei già registrato? <a routerLink="/login">ACCEDI</a></p>
   </div>
 </form>
-

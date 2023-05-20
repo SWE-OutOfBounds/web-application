@@ -1,44 +1,78 @@
 <form class="login-form" [formGroup]="_loginForm" autocomplete="off">
-    <h1>SIGNIN</h1>
-    <app-logo></app-logo>
+  <h1>SIGNIN</h1>
+  <app-logo></app-logo>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Email</mat-label>
-      <input type="text" matInput placeholder="La tua email" formControlName="email">
-      <mat-error *ngIf="this._loginForm.get('email')?.hasError('required')">
-        L'indirizzo email è necessario.
-      </mat-error>
-      <mat-error *ngIf="this._loginForm.get('email')?.hasError('pattern')">
-        Inserisci una email valida.
-      </mat-error>
-      <mat-error *ngIf="this._loginForm.get('email')?.hasError('wrongCredentialError')">
-        Credenziali errate.
-      </mat-error>
-    </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input
+      type="text"
+      matInput
+      placeholder="La tua email"
+      formControlName="email"
+    />
+    <mat-error *ngIf="this._loginForm.get('email')?.hasError('required')">
+      L'indirizzo email è necessario.
+    </mat-error>
+    <mat-error *ngIf="this._loginForm.get('email')?.hasError('pattern')">
+      Inserisci una email valida.
+    </mat-error>
+    <mat-error
+      *ngIf="this._loginForm.get('email')?.hasError('wrongCredentialError')"
+    >
+      Credenziali errate.
+    </mat-error>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Password</mat-label>
-      <input type="password" matInput [type]="_hide ? 'password' : 'text'" placeholder="La tua password"
-        formControlName="password">
-      <mat-icon matSuffix (click)="_hide = !_hide">{{_hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-      <mat-error *ngIf="this._loginForm.get('password')?.hasError('required')">
-        La password è necessaria.
-      </mat-error>
-      <mat-error *ngIf="this._loginForm.get('password')?.hasError('format')">
-        Formato password errato.
-      </mat-error>
-      <mat-error *ngIf="this._loginForm.get('password')?.hasError('wrongCredentialError')">
-        Credenziali errate.
-      </mat-error>
-    </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Password</mat-label>
+    <input
+      type="password"
+      matInput
+      [type]="_hide ? 'password' : 'text'"
+      placeholder="La tua password"
+      formControlName="password"
+    />
+    <mat-icon matSuffix (click)="_hide = !_hide">{{
+      _hide ? "visibility_off" : "visibility"
+    }}</mat-icon>
+    <mat-error *ngIf="this._loginForm.get('password')?.hasError('required')">
+      La password è necessaria.
+    </mat-error>
+    <mat-error *ngIf="this._loginForm.get('password')?.hasError('format')">
+      Formato password errato.
+    </mat-error>
+    <mat-error
+      *ngIf="this._loginForm.get('password')?.hasError('wrongCredentialError')"
+    >
+      Credenziali errate.
+    </mat-error>
+  </mat-form-field>
 
-    <div id="clock-captcha"></div>
+  <div id="clock-captcha"></div>
 
-    <button mat-raised-button color="primary" type="submit"
-      [disabled]="(this._loginForm.get('email')?.hasError('required') || this._loginForm.get('password')?.hasError('required')) ? true : false"
-      (click) = "login()">ACCEDI</button>
+  <div *ngIf="errorMessage" class="error">
+    <h3>Tempus Fugit</h3>
+    <p>{{ errorMessage }}</p>
+    <a routerLink="">Torna alla Home</a>
+  </div>
 
-      <div class="switchPage">
-        <p>Non sei ancora registrato? <a routerLink="/signup">REGISTRATI</a></p>
-      </div>
-  </form>
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="
+      this._loginForm.get('email')?.hasError('required') ||
+      this._loginForm.get('password')?.hasError('required') ||
+      errorMessage
+        ? true
+        : false
+    "
+    (click)="login()"
+  >
+    ACCEDI
+  </button>
+
+  <div class="switchPage">
+    <p>Non sei ancora registrato? <a routerLink="/signup">REGISTRATI</a></p>
+  </div>
+</form>
