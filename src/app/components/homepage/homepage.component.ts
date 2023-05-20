@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs';
 export class HomepageComponent implements OnInit, OnDestroy{
 
   /**
-   * Indica quando la sessione è aperta
+   * Indica se la sessione è aperta
    */
   isSessionOpen: boolean = false;
 
