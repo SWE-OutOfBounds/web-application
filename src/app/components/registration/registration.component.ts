@@ -110,6 +110,7 @@ export class RegistrationComponent implements OnInit {
         .subscribe((result) => {
           if (result.okay) {
             this._router.navigate(['/login']);
+            this._snackBar.open('Registrazione avvenuta con successo!', 'OK');
           } else {
             switch (result.case) {
               case 'BAD_CAPTCHA':
@@ -125,6 +126,16 @@ export class RegistrationComponent implements OnInit {
               case 'USED_TOKEN':
                 this._captchaModule?.clear();
                 this._captchaModule?.error('Qualcosa è andato storto. Riprova');
+                this._ccService.ccInit().subscribe((response) => {
+                  this._captchaModule?.fill(
+                    response.cc_content,
+                    response.cc_token
+                  );
+                });
+                break;
+              case 'EXPIRED_TOKEN':
+                this._captchaModule?.clear();
+                this._captchaModule?.error('Il tempo è volato! Riprova');
                 this._ccService.ccInit().subscribe((response) => {
                   this._captchaModule?.fill(
                     response.cc_content,

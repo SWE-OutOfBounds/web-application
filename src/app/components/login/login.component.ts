@@ -126,6 +126,26 @@ export class LoginComponent implements OnInit {
                   );
                 });
                 break;
+              case 'USED_TOKEN':
+                this._captchaModule?.clear();
+                this._captchaModule?.error('Qualcosa è andato storto. Riprova');
+                this._ccService.ccInit().subscribe((response) => {
+                  this._captchaModule?.fill(
+                    response.cc_content,
+                    response.cc_token
+                  );
+                });
+                break;
+              case 'EXPIRED_TOKEN':
+                this._captchaModule?.clear();
+                this._captchaModule?.error('Il tempo è volato! Riprova');
+                this._ccService.ccInit().subscribe((response) => {
+                  this._captchaModule?.fill(
+                    response.cc_content,
+                    response.cc_token
+                  );
+                });
+                break;
 
               case 'INVALID_EMAIL_FORMAT':
                 this.regenerateCaptcha();

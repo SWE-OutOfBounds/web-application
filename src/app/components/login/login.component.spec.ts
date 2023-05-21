@@ -168,6 +168,7 @@ describe('LoginComponent', () => {
       loginForm.setValue(loginFormValue);
       component['_loginForm'] = loginForm;
     });
+
     /**
      * Verifica se viene restituito un messaggio di errore nel caso in cui l'input fornito nel modulo di test abbia lunghezza diversa da 5
      */
@@ -232,6 +233,90 @@ describe('LoginComponent', () => {
       expect(captchaModuleMock.clear).toHaveBeenCalled();
       expect(captchaModuleMock.error).toHaveBeenCalledWith(
         'OPS, ORARIO SCORRETTO!'
+      );
+      expect(ccServiceMock.ccInit).toHaveBeenCalled();
+      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
+        'captcha-content',
+        'captcha-token'
+      );
+      expect(sessionServiceMock.login).toHaveBeenCalledWith(
+        loginFormValue.email,
+        loginFormValue.password,
+        captchaModuleMock.getToken(),
+        captchaModuleMock.getInput()
+      );
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+    });
+
+    /**
+     * Verifica la funzione di login in caso di token del CAPTCHA non valido
+     */
+    it('should handle USED_TOKEN error case', () => {
+      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
+      captchaModuleMock.getToken = jasmine
+        .createSpy()
+        .and.returnValue('captcha-token');
+
+      loginResponse = { okay: false, case: 'USED_TOKEN' };
+      const ccServiceResponse = {
+        cc_content: 'captcha-content',
+        cc_token: 'captcha-token',
+      };
+
+      sessionServiceMock.login = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(loginResponse),
+      });
+      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(ccServiceResponse),
+      });
+
+      component.login();
+
+      expect(captchaModuleMock.clear).toHaveBeenCalled();
+      expect(captchaModuleMock.error).toHaveBeenCalledWith(
+        'Qualcosa è andato storto. Riprova'
+      );
+      expect(ccServiceMock.ccInit).toHaveBeenCalled();
+      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
+        'captcha-content',
+        'captcha-token'
+      );
+      expect(sessionServiceMock.login).toHaveBeenCalledWith(
+        loginFormValue.email,
+        loginFormValue.password,
+        captchaModuleMock.getToken(),
+        captchaModuleMock.getInput()
+      );
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+    });
+
+    /**
+     * Verifica la funzione di login in caso di errore commesso nel clock CAPTCHA
+     */
+    it('should handle EXPIRED_TOKEN error case', () => {
+      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
+      captchaModuleMock.getToken = jasmine
+        .createSpy()
+        .and.returnValue('captcha-token');
+
+      loginResponse = { okay: false, case: 'EXPIRED_TOKEN' };
+      const ccServiceResponse = {
+        cc_content: 'captcha-content',
+        cc_token: 'captcha-token',
+      };
+
+      sessionServiceMock.login = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(loginResponse),
+      });
+      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(ccServiceResponse),
+      });
+
+      component.login();
+
+      expect(captchaModuleMock.clear).toHaveBeenCalled();
+      expect(captchaModuleMock.error).toHaveBeenCalledWith(
+        'Il tempo è volato! Riprova'
       );
       expect(ccServiceMock.ccInit).toHaveBeenCalled();
       expect(captchaModuleMock.fill).toHaveBeenCalledWith(
