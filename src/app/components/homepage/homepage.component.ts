@@ -76,10 +76,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
     //chiude la sessione
     this._sessionService.logout();
 
-    //ripristina i valori di default
-    this.userName = 'Ospite';
-    this.userEmail = '';
-
     //aggiorna la pagina
     this._router
       .navigateByUrl('/login', { skipLocationChange: true })

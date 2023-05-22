@@ -76,14 +76,16 @@ export class RegistrationComponent implements OnInit {
    */
   ngOnInit(): void {
     this._captchaModule.inject(document.getElementById('clock-captcha_signup'));
-    this._ccService.ccInit().subscribe((response) => {
-      if (response.cc_content && response.cc_token)
-        this._captchaModule.fill(response.cc_content, response.cc_token);
-      else {
-        this.errorMessage =
-          'Si è verificato un errore nel recupero del test, per cui al momento non è possibile accedere al nostro sistema. Si prega di riprovare più tardi.';
-      }
-    });
+    setTimeout(() => {
+      this._ccService.ccInit().subscribe((response) => {
+        if (response.cc_content && response.cc_token)
+          this._captchaModule.fill(response.cc_content, response.cc_token);
+        else {
+          this.errorMessage =
+            'Si è verificato un errore nel recupero del test, per cui al momento non è possibile accedere al nostro sistema. Si prega di riprovare più tardi.';
+        }
+      });
+    }, 1000);
   }
 
   /**

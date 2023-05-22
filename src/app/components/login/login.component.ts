@@ -86,7 +86,7 @@ export class LoginComponent implements OnInit {
             'Si è verificato un errore nel recupero del test, per cui al momento non è possibile accedere al nostro sistema. Si prega di riprovare più tardi.';
         }
       });
-    }, 2000);
+    }, 1000);
   }
 
   /**

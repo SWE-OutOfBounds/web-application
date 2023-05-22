@@ -1,16 +1,13 @@
-import {
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
-} from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HomepageComponent } from './homepage.component';
 import { SessionService } from '../../services/session/session.service';
 import { BehaviorSubject } from 'rxjs';
 import { User } from 'src/app/services/session/user.model';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { By } from '@angular/platform-browser';
 import { LoginComponent } from '../login/login.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('HomepageComponent', () => {
   let component: HomepageComponent;
@@ -25,13 +22,19 @@ describe('HomepageComponent', () => {
     sessionServiceMock.user = new BehaviorSubject<User | null>(null);
 
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule.withRoutes([
-          { path: '', component: HomepageComponent },
-          { path: 'login', component: LoginComponent },
-        ]),
+      imports: [RouterTestingModule],
+      declarations: [HomepageComponent],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        { provide: SessionService, useValue: sessionServiceMock },
+        {
+          provide: ActivatedRoute,
+          useValue: [
+            { path: '', component: HomepageComponent },
+            { path: '/login', component: LoginComponent },
+          ],
+        },
       ],
-      providers: [{ provide: SessionService, useValue: sessionServiceMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomepageComponent);
@@ -39,13 +42,14 @@ describe('HomepageComponent', () => {
     sessionServiceMock = TestBed.inject(SessionService);
     router = TestBed.inject(Router);
     component['userSub'] = sessionServiceMock.user.subscribe();
+
+    fixture.detectChanges();
   });
 
   afterEach(() => {
     fixture.destroy();
   });
 
-  // Test costruttore
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
@@ -78,11 +82,15 @@ describe('HomepageComponent', () => {
     });
   });
 
-  it('should log out and refresh page', fakeAsync(() => {
+  it('should log out and refresh page when logout-button is clicked', async () => {
+    //Simula sessione aperta
     component.userName = 'Mario';
     component.userEmail = 'example@test.com';
-    component.currentUrl = '';
+    component.isSessionOpen = true;
+    fixture.detectChanges();
 
+    //Arrange per la verifica del refresh della pagina
+    component.currentUrl = '';
     const navigateByUrlSpy = spyOn(router, 'navigateByUrl').and.returnValue(
       Promise.resolve(true)
     );
@@ -90,19 +98,20 @@ describe('HomepageComponent', () => {
       Promise.resolve(true)
     );
 
-    component.logOut();
+    //Act
+    const logoutButton = fixture.debugElement.query(
+      By.css('[data-testid="logout-button"]')
+    );
+    logoutButton.triggerEventHandler('click', null);
+    await component.logOut();
 
+    //Assert
     expect(sessionServiceMock.logout).toHaveBeenCalled();
-    expect(component.userName).toBe('Ospite');
-    expect(component.userEmail).toBe('');
-
-    tick();
-
     expect(navigateByUrlSpy).toHaveBeenCalledWith('/login', {
       skipLocationChange: true,
     });
     expect(navigateSpy).toHaveBeenCalledWith([component.currentUrl]);
-  }));
+  });
 
   it('should unsubscribe from user subscription', () => {
     spyOn(component['userSub'], 'unsubscribe');

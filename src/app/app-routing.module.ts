@@ -6,7 +6,7 @@ import { HomepageComponent } from './components/homepage/homepage.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', component: HomepageComponent },
   { path: 'login', component: LoginComponent, canActivate: [NotAuthGuard] },
   {

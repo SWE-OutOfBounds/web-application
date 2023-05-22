@@ -6,12 +6,14 @@ import {
 } from '@angular/core/testing';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClockCAPTCHAView } from '../../../../../clock-captcha/dist/index';
 import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captcha.service';
 import { RegistrationService } from 'src/app/services/session/registration.service';
 import { RegistrationComponent } from './registration.component';
 import { of } from 'rxjs';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Property } from 'canvg';
 
 describe('RegistrationComponent', () => {
   let component: RegistrationComponent;
@@ -40,6 +42,8 @@ describe('RegistrationComponent', () => {
     ]);
 
     TestBed.configureTestingModule({
+      declarations: [RegistrationComponent],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         RegistrationComponent,
         { provide: Router, useValue: routerMock },
@@ -63,6 +67,8 @@ describe('RegistrationComponent', () => {
     getElementByIdSpy = spyOn(document, 'getElementById').and.returnValue(
       document.createElement('div')
     );
+
+    fixture.detectChanges();
   });
 
   describe('Constructor', () => {
@@ -107,6 +113,10 @@ describe('RegistrationComponent', () => {
      * nel caso in cui la libreria abbia effettivamente inviato l'immagine e il token da inizializzare
      */
     it('should initialize the clock-captcha if recives an image and a token from the service', fakeAsync(() => {
+      ccServiceMock.ccInit = jasmine
+        .createSpy()
+        .and.returnValue(of({ cc_content: 'content', cc_token: 'token' }));
+
       component.ngOnInit();
 
       expect(getElementByIdSpy).toHaveBeenCalledWith('clock-captcha_signup');
@@ -134,6 +144,8 @@ describe('RegistrationComponent', () => {
       ccServiceMock.ccInit = jasmine
         .createSpy()
         .and.returnValue(of({ success: false }));
+
+      fixture.detectChanges();
 
       component.ngOnInit();
 
@@ -165,6 +177,94 @@ describe('RegistrationComponent', () => {
       okay: boolean;
       case?: string;
     };
+
+    function checkCCError(detailsError: string, msgError: string) {
+      //imposta correttamente mock input e mock token del clock captcha
+      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
+      captchaModuleMock.getToken = jasmine
+        .createSpy()
+        .and.returnValue('captcha-token');
+
+      //imposta mock errore di registrazione
+      signupResponse = { okay: false, case: detailsError };
+      const ccServiceResponse = {
+        cc_content: 'captcha-content',
+        cc_token: 'captcha-token',
+      };
+
+      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(signupResponse),
+      });
+      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(ccServiceResponse),
+      });
+
+      //esegui funzione da testare
+      component.signUp();
+
+      //test risultati attesi
+      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
+        signupFormValue.firstName,
+        signupFormValue.lastName,
+        signupFormValue.username,
+        signupFormValue.email,
+        signupFormValue.password,
+        captchaModuleMock.getToken(),
+        captchaModuleMock.getInput()
+      );
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+
+      expect(captchaModuleMock.clear).toHaveBeenCalled();
+      expect(captchaModuleMock.error).toHaveBeenCalledWith(msgError);
+      expect(ccServiceMock.ccInit).toHaveBeenCalled();
+      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
+        'captcha-content',
+        'captcha-token'
+      );
+    }
+
+    function checkSignupError(detailsError: string) {
+      //imposta correttamente mock input e mock token del clock captcha
+      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
+      captchaModuleMock.getToken = jasmine
+        .createSpy()
+        .and.returnValue('captcha-token');
+
+      //imposta mock errore di registrazione
+      const ccServiceResponse = {
+        cc_content: 'captcha-content',
+        cc_token: 'captcha-token',
+      };
+      signupResponse = { okay: false, case: detailsError };
+
+      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(ccServiceResponse),
+      });
+      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(signupResponse),
+      });
+
+      //esegue funzione da testare
+      component.signUp();
+
+      //test risultati attesi
+      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
+        signupFormValue.firstName,
+        signupFormValue.lastName,
+        signupFormValue.username,
+        signupFormValue.email,
+        signupFormValue.password,
+        captchaModuleMock.getToken(),
+        captchaModuleMock.getInput()
+      );
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+      expect(captchaModuleMock.clear).toHaveBeenCalled();
+      expect(ccServiceMock.ccInit).toHaveBeenCalled();
+      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
+        'captcha-content',
+        'captcha-token'
+      );
+    }
 
     beforeEach(() => {
       // assegnazione delle variabili necessarie ai test
@@ -233,151 +333,32 @@ describe('RegistrationComponent', () => {
      * Verifica la funzione di registrazione in caso di errore commesso nel clock CAPTCHA
      */
     it('should handle BAD_CAPTCHA error case', () => {
-      //imposta correttamente mock input e mock token del clock captcha
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
+      checkCCError('BAD_CAPTCHA', 'OPS, ORARIO SCORRETTO!');
+    });
 
-      //imposta mock errore di registrazione
-      signupResponse = { okay: false, case: 'BAD_CAPTCHA' };
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-
-      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(signupResponse),
-      });
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-
-      //esegui funzione da testare
-      component.signUp();
-
-      //test risultati attesi
-      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
-        signupFormValue.firstName,
-        signupFormValue.lastName,
-        signupFormValue.username,
-        signupFormValue.email,
-        signupFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(captchaModuleMock.error).toHaveBeenCalledWith(
-        'OPS, ORARIO SCORRETTO!'
-      );
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
+    /**
+     * Verifica la funzione di registrazione nel caso di token non valido
+     */
+    it('should handle USED_TOKEN error case', () => {
+      checkCCError('USED_TOKEN', 'Qualcosa è andato storto. Riprova');
     });
 
     /**
      * Verifica la funzione di registrazione nel caso di token scaduto
      */
-    it('should handle USED_TOKEN error case', () => {
-      //imposta correttamente mock input e mock token del clock captcha
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      //imposta mock errore di registrazione
-      signupResponse = { okay: false, case: 'USED_TOKEN' };
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-
-      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(signupResponse),
-      });
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-
-      //esegui funzione da testare
-      component.signUp();
-
-      //test risultati attesi
-      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
-        signupFormValue.firstName,
-        signupFormValue.lastName,
-        signupFormValue.username,
-        signupFormValue.email,
-        signupFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(captchaModuleMock.error).toHaveBeenCalledWith(
-        'Qualcosa è andato storto. Riprova'
-      );
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
+    it('should handle EXPIRED_TOKEN error case', () => {
+      checkCCError('EXPIRED_TOKEN', 'Il tempo è volato! Riprova');
     });
 
     /**
      * Verifica la funzione di registrazione nel caso di formato nome errato
      */
     it('should handle INVALID_FORMAT_FIRSTNAME error case', () => {
-      //imposta correttamente mock input e mock token del clock captcha
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      //imposta mock errore di registrazione
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-      signupResponse = { okay: false, case: 'INVALID_FORMAT_FIRSTNAME' };
-
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(signupResponse),
-      });
-
       //imposta mock set di errore
       const firstNameControl: AbstractControl<any, any> =
         component['_signupForm'].get('firstName')!;
       spyOn(firstNameControl, 'setErrors');
-
-      //esegue funzione da testare
-      component.signUp();
-
-      //test risultati attesi
-      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
-        signupFormValue.firstName,
-        signupFormValue.lastName,
-        signupFormValue.username,
-        signupFormValue.email,
-        signupFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
+      checkSignupError('INVALID_FORMAT_FIRSTNAME');
       expect(firstNameControl.setErrors).toHaveBeenCalledWith({
         pattern: true,
       });
@@ -387,103 +368,25 @@ describe('RegistrationComponent', () => {
      * Verifica la funzione di registrazione nel caso di formato cognome errato
      */
     it('should handle INVALID_FORMAT_LASTNAME error case', () => {
-      //imposta correttamente mock input e mock token del clock captcha
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      //imposta mock errore di registrazione
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-      signupResponse = { okay: false, case: 'INVALID_FORMAT_LASTNAME' };
-
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(signupResponse),
-      });
-
       //imposta mock set di errore
       const lastNameControl: AbstractControl<any, any> =
         component['_signupForm'].get('lastName')!;
       spyOn(lastNameControl, 'setErrors');
-
-      //esegue funzione da testare
-      component.signUp();
-
-      //test risultati attesi
-      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
-        signupFormValue.firstName,
-        signupFormValue.lastName,
-        signupFormValue.username,
-        signupFormValue.email,
-        signupFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
-      expect(lastNameControl.setErrors).toHaveBeenCalledWith({ pattern: true });
+      checkSignupError('INVALID_FORMAT_LASTNAME');
+      expect(lastNameControl.setErrors).toHaveBeenCalledWith({
+        pattern: true,
+      });
     });
 
     /**
      * Verifica la funzione di registrazione nel caso di formato username errato
      */
     it('should handle INVALID_FORMAT_USERNAME error case', () => {
-      //imposta correttamente mock input e mock token del clock captcha
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      //imposta mock errore di registrazione
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-      signupResponse = { okay: false, case: 'INVALID_FORMAT_USERNAME' };
-
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(signupResponse),
-      });
-
       //imposta mock set di errore
       const usernameControl: AbstractControl<any, any> =
         component['_signupForm'].get('username')!;
       spyOn(usernameControl, 'setErrors');
-
-      //esegue funzione da testare
-      component.signUp();
-
-      //test risultati attesi
-      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
-        signupFormValue.firstName,
-        signupFormValue.lastName,
-        signupFormValue.username,
-        signupFormValue.email,
-        signupFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
+      checkSignupError('INVALID_FORMAT_USERNAME');
       expect(usernameControl.setErrors).toHaveBeenCalledWith({
         required: true,
       });
@@ -493,51 +396,11 @@ describe('RegistrationComponent', () => {
      * Verifica la funzione di registrazione nel caso di formato email errato
      */
     it('should handle INVALID_FORMAT_EMAIL error case', () => {
-      //imposta correttamente mock input e mock token del clock captcha
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      //imposta mock errore di registrazione
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-      signupResponse = { okay: false, case: 'INVALID_FORMAT_EMAIL' };
-
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(signupResponse),
-      });
-
       //imposta mock set di errore
       const emailControl: AbstractControl<any, any> =
         component['_signupForm'].get('email')!;
       spyOn(emailControl, 'setErrors');
-
-      //esegue funzione da testare
-      component.signUp();
-
-      //test risultati attesi
-      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
-        signupFormValue.firstName,
-        signupFormValue.lastName,
-        signupFormValue.username,
-        signupFormValue.email,
-        signupFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
+      checkSignupError('INVALID_FORMAT_EMAIL');
       expect(emailControl.setErrors).toHaveBeenCalledWith({ pattern: true });
     });
 
@@ -545,51 +408,12 @@ describe('RegistrationComponent', () => {
      * Verifica la funzione di registrazione nel caso di formato password errato
      */
     it('should handle INVALID_FORMAT_PASSWORD error case', () => {
-      //imposta correttamente mock input e mock token del clock captcha
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      //imposta mock errore di registrazione
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-      signupResponse = { okay: false, case: 'INVALID_FORMAT_PASSWORD' };
-
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(signupResponse),
-      });
-
       //imposta mock set di errore
       const passwordControl: AbstractControl<any, any> =
         component['_signupForm'].get('password')!;
       spyOn(passwordControl, 'setErrors');
+      checkSignupError('INVALID_FORMAT_PASSWORD');
 
-      //esegue funzione da testare
-      component.signUp();
-
-      //test risultati attesi
-      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
-        signupFormValue.firstName,
-        signupFormValue.lastName,
-        signupFormValue.username,
-        signupFormValue.email,
-        signupFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
       expect(passwordControl.setErrors).toHaveBeenCalledWith({ pattern: true });
     });
 
@@ -597,51 +421,11 @@ describe('RegistrationComponent', () => {
      * Verifica la funzione di registrazione nel caso di email già in uso
      */
     it('should handle USED_EMAIL error case', () => {
-      //imposta correttamente mock input e mock token del clock captcha
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      //imposta mock errore di registrazione
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-      signupResponse = { okay: false, case: 'USED_EMAIL' };
-
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(signupResponse),
-      });
-
       //imposta mock set di errore
       const emailControl: AbstractControl<any, any> =
         component['_signupForm'].get('email')!;
       spyOn(emailControl, 'setErrors');
-
-      //esegue funzione da testare
-      component.signUp();
-
-      //test risultati attesi
-      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
-        signupFormValue.firstName,
-        signupFormValue.lastName,
-        signupFormValue.username,
-        signupFormValue.email,
-        signupFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
+      checkSignupError('USED_EMAIL');
       expect(emailControl.setErrors).toHaveBeenCalledWith({
         alreadyExisted: true,
       });
@@ -651,46 +435,8 @@ describe('RegistrationComponent', () => {
      * Verifica la funzione di registrazione nel caso di errore diverso dai precedenti
      */
     it('should handle default error case', () => {
-      //imposta correttamente mock input e mock token del clock captcha
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
+      checkSignupError('some-error');
 
-      //imposta mock errore di registrazione
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-      signupResponse = { okay: false, case: 'Some-Error' };
-
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-      registrationServiceMock.signUp = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(signupResponse),
-      });
-
-      //esegue funzione da testare
-      component.signUp();
-
-      //test risultati attesi
-      expect(registrationServiceMock.signUp).toHaveBeenCalledWith(
-        signupFormValue.firstName,
-        signupFormValue.lastName,
-        signupFormValue.username,
-        signupFormValue.email,
-        signupFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
       expect(snackBarMock.open).toHaveBeenCalledWith(
         'Errore interno al sito. Riprova tra qualche minuto.',
         'OK'

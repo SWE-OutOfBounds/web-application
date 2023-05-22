@@ -7,11 +7,17 @@ import {
 import { LoginComponent } from './login.component';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  AbstractControl,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { SessionService } from 'src/app/services/session/session.service';
 import { ClockCaptchaService } from 'src/app/services/clock-captcha/clock-captcha.service';
 import { ClockCAPTCHAView } from '../../../../../clock-captcha/dist/index';
 import { of } from 'rxjs';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -38,6 +44,9 @@ describe('LoginComponent', () => {
     ]);
 
     TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule],
+      declarations: [LoginComponent],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         LoginComponent,
         { provide: Router, useValue: routerMock },
@@ -58,6 +67,8 @@ describe('LoginComponent', () => {
     getElementByIdSpy = spyOn(document, 'getElementById').and.returnValue(
       document.createElement('div')
     );
+
+    fixture.detectChanges();
   });
 
   describe('Constructor', () => {
@@ -155,6 +166,93 @@ describe('LoginComponent', () => {
       case?: string;
     };
 
+    function testCCError(detailsError: string, msgError: string) {
+      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
+      captchaModuleMock.getToken = jasmine
+        .createSpy()
+        .and.returnValue('captcha-token');
+
+      loginResponse = { okay: false, case: detailsError };
+      const ccServiceResponse = {
+        cc_content: 'captcha-content',
+        cc_token: 'captcha-token',
+      };
+
+      sessionServiceMock.login = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(loginResponse),
+      });
+      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(ccServiceResponse),
+      });
+
+      component.login();
+
+      expect(captchaModuleMock.clear).toHaveBeenCalled();
+      expect(captchaModuleMock.error).toHaveBeenCalledWith(msgError);
+      expect(ccServiceMock.ccInit).toHaveBeenCalled();
+      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
+        'captcha-content',
+        'captcha-token'
+      );
+      expect(sessionServiceMock.login).toHaveBeenCalledWith(
+        loginFormValue.email,
+        loginFormValue.password,
+        captchaModuleMock.getToken(),
+        captchaModuleMock.getInput()
+      );
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+    }
+
+    function testFailLogin(detailsError: string) {
+      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
+      captchaModuleMock.getToken = jasmine
+        .createSpy()
+        .and.returnValue('captcha-token');
+
+      const ccServiceResponse = {
+        cc_content: 'captcha-content',
+        cc_token: 'captcha-token',
+      };
+      loginResponse = { okay: false, case: detailsError };
+
+      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(ccServiceResponse),
+      });
+      sessionServiceMock.login = jasmine.createSpy().and.returnValue({
+        subscribe: (callback: any) => callback(loginResponse),
+      });
+
+      const emailControl: AbstractControl<any, any> =
+        component['_loginForm'].get('email')!;
+      const passwordControl: AbstractControl<any, any> =
+        component['_loginForm'].get('password')!;
+
+      spyOn(emailControl, 'setErrors');
+      spyOn(passwordControl, 'setErrors');
+
+      component.login();
+
+      expect(ccServiceMock.ccInit).toHaveBeenCalled();
+      expect(sessionServiceMock.login).toHaveBeenCalledWith(
+        loginFormValue.email,
+        loginFormValue.password,
+        captchaModuleMock.getToken(),
+        captchaModuleMock.getInput()
+      );
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+      expect(captchaModuleMock.clear).toHaveBeenCalled();
+      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
+        'captcha-content',
+        'captcha-token'
+      );
+      expect(emailControl.setErrors).toHaveBeenCalledWith({
+        wrongCredentialError: true,
+      });
+      expect(passwordControl.setErrors).toHaveBeenCalledWith({
+        wrongCredentialError: true,
+      });
+    }
+
     beforeEach(() => {
       // assegnazione delle variabili necessarie ai test
       loginFormValue = {
@@ -210,237 +308,46 @@ describe('LoginComponent', () => {
      * Verifica la funzione di login in caso di errore commesso nel clock CAPTCHA
      */
     it('should handle BAD_CAPTCHA error case', () => {
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      loginResponse = { okay: false, case: 'BAD_CAPTCHA' };
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-
-      sessionServiceMock.login = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(loginResponse),
-      });
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-
-      component.login();
-
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(captchaModuleMock.error).toHaveBeenCalledWith(
-        'OPS, ORARIO SCORRETTO!'
-      );
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
-      expect(sessionServiceMock.login).toHaveBeenCalledWith(
-        loginFormValue.email,
-        loginFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
+      testCCError('BAD_CAPTCHA', 'OPS, ORARIO SCORRETTO!');
     });
 
     /**
      * Verifica la funzione di login in caso di token del CAPTCHA non valido
      */
     it('should handle USED_TOKEN error case', () => {
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      loginResponse = { okay: false, case: 'USED_TOKEN' };
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-
-      sessionServiceMock.login = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(loginResponse),
-      });
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-
-      component.login();
-
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(captchaModuleMock.error).toHaveBeenCalledWith(
-        'Qualcosa è andato storto. Riprova'
-      );
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
-      expect(sessionServiceMock.login).toHaveBeenCalledWith(
-        loginFormValue.email,
-        loginFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
+      testCCError('USED_TOKEN', 'Qualcosa è andato storto. Riprova');
     });
 
     /**
      * Verifica la funzione di login in caso di errore commesso nel clock CAPTCHA
      */
     it('should handle EXPIRED_TOKEN error case', () => {
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      loginResponse = { okay: false, case: 'EXPIRED_TOKEN' };
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-
-      sessionServiceMock.login = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(loginResponse),
-      });
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-
-      component.login();
-
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(captchaModuleMock.error).toHaveBeenCalledWith(
-        'Il tempo è volato! Riprova'
-      );
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
-      expect(sessionServiceMock.login).toHaveBeenCalledWith(
-        loginFormValue.email,
-        loginFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
+      testCCError('EXPIRED_TOKEN', 'Il tempo è volato! Riprova');
     });
 
     /**
      * Verifica la funzione di login in caso di indirizzo email nel formato errato
      */
     it('should handle INVALID_EMAIL_FORMAT error case', () => {
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
+      testFailLogin('INVALID_EMAIL_FORMAT');
+    });
 
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-      loginResponse = { okay: false, case: 'INVALID_EMAIL_FORMAT' };
-
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-      sessionServiceMock.login = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(loginResponse),
-      });
-
-      const emailControl: AbstractControl<any, any> =
-        component['_loginForm'].get('email')!;
-      const passwordControl: AbstractControl<any, any> =
-        component['_loginForm'].get('password')!;
-
-      spyOn(emailControl, 'setErrors');
-      spyOn(passwordControl, 'setErrors');
-
-      component.login();
-
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(sessionServiceMock.login).toHaveBeenCalledWith(
-        loginFormValue.email,
-        loginFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
-      expect(emailControl.setErrors).toHaveBeenCalledWith({
-        wrongCredentialError: true,
-      });
-      expect(passwordControl.setErrors).toHaveBeenCalledWith({
-        wrongCredentialError: true,
-      });
+    /**
+     * Verifica la funzione di login in caso di password che non rispetta i vincoli dati
+     */
+    it('should handle INVALID_PASSWORD_FORMAT error case', () => {
+      testFailLogin('INVALID_PASSWORD_FORMAT');
     });
 
     /**
      * Verifica la funzione di login in caso di credenziali errate
      */
     it('should handle BAD_CREDENTIAL error case', () => {
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      captchaModuleMock.getToken = jasmine
-        .createSpy()
-        .and.returnValue('captcha-token');
-
-      const ccServiceResponse = {
-        cc_content: 'captcha-content',
-        cc_token: 'captcha-token',
-      };
-      loginResponse = { okay: false, case: 'BAD_CREDENTIAL' };
-
-      captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
-      ccServiceMock.ccInit = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(ccServiceResponse),
-      });
-      sessionServiceMock.login = jasmine.createSpy().and.returnValue({
-        subscribe: (callback: any) => callback(loginResponse),
-      });
-
-      const emailControl: AbstractControl<any, any> =
-        component['_loginForm'].get('email')!;
-      const passwordControl: AbstractControl<any, any> =
-        component['_loginForm'].get('password')!;
-
-      spyOn(emailControl, 'setErrors');
-      spyOn(passwordControl, 'setErrors');
-
-      component.login();
-
-      expect(ccServiceMock.ccInit).toHaveBeenCalled();
-      expect(sessionServiceMock.login).toHaveBeenCalledWith(
-        loginFormValue.email,
-        loginFormValue.password,
-        captchaModuleMock.getToken(),
-        captchaModuleMock.getInput()
-      );
-      expect(routerMock.navigate).not.toHaveBeenCalled();
-      expect(captchaModuleMock.clear).toHaveBeenCalled();
-      expect(captchaModuleMock.fill).toHaveBeenCalledWith(
-        'captcha-content',
-        'captcha-token'
-      );
-      expect(emailControl.setErrors).toHaveBeenCalledWith({
-        wrongCredentialError: true,
-      });
-      expect(passwordControl.setErrors).toHaveBeenCalledWith({
-        wrongCredentialError: true,
-      });
+      testFailLogin('BAD_CREDENTIAL');
     });
 
     /**
-     * VErifica della funzione di login in caso di errore diverso dai precedenti errori
+     * Verifica della funzione di login in caso di errore diverso dai precedenti errori
      */
     it('should handle default error case', () => {
       captchaModuleMock.getInput = jasmine.createSpy().and.returnValue('12345');
