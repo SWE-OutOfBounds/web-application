@@ -20,7 +20,7 @@ export class User {
   /**
    * Restituisce il token di sessione dell'utente solo quando è valido.
    */
-  get token() {
+  get token(): string | null {
     const currentTime: Date = new Date();
 
     //se il token non è mai stato generato oppure è scaduto il token di sessione sarà nullo

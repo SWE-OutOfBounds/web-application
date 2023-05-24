@@ -17,7 +17,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   /**
    * Indica se la sessione è aperta
    */
-  isSessionOpen: boolean = false;
+  public isSessionOpen: boolean = false;
 
   /**
    * Rappresenta la sottoscrizione dei dati dell'utente.
@@ -28,21 +28,22 @@ export class HomepageComponent implements OnInit, OnDestroy {
   /**
    * Immagine che rappresenta il profilo utente
    */
-  backGroundImage: string = 'url(../../assets/images/defaultProfilePic.png)';
+  public backGroundImage: string =
+    'url(../../assets/images/defaultProfilePic.png)';
   /**
    * Nome utente che può avere:
    * un valore di default in caso di utente non autenticato,
    * oppure il nome scelto dall'utente in caso di sessione aperta.
    */
-  userName: string = '';
+  public userName: string = '';
   /**
    * Indirizzo email. Esso contiene un valore solo quando l'utente ha eseguito l'accesso.
    */
-  userEmail: string = '';
+  public userEmail: string = '';
   /**
    * Indirizzo corrente della navigazione.
    */
-  currentUrl = this._router.url;
+  public currentUrl: string = this._router.url;
 
   /**
    * Costruttore della pagina di home
@@ -51,7 +52,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
    * @param _router Consente di gestire la navigazione tra le pagine
    */
   constructor(
-    protected _sessionService: SessionService,
+    private _sessionService: SessionService,
     private _router: Router
   ) {}
 

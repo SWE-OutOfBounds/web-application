@@ -31,8 +31,8 @@ export interface LoginResponse {
  * Servizio che consente l'apertura e chiusura di sessione dell'utente che si sta autenticando
  */
 export class SessionService {
-  user = new BehaviorSubject<User | null>(null);
-  private tokenExpirationTimer: any;
+  public user = new BehaviorSubject<User | null>(null);
+  private tokenExpirationTimer: NodeJS.Timeout | null = null;
 
   /**
    * Costruttore del servizio di Sessione

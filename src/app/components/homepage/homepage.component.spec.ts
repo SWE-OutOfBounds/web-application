@@ -3,7 +3,7 @@ import { HomepageComponent } from './homepage.component';
 import { SessionService } from '../../services/session/session.service';
 import { BehaviorSubject } from 'rxjs';
 import { User } from 'src/app/services/session/user.model';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { LoginComponent } from '../login/login.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';

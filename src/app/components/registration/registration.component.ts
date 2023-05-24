@@ -190,7 +190,7 @@ export class RegistrationComponent implements OnInit {
    * Rigenera il CAPTCHA ripulendo il modulo corrente e richiedendone uno nuovo al servizio di back end.
    * Una volta ricevuta risposta dal server, aggiorna il modulo del CAPTCHA con il nuovo contenuto e il nuovo token generato.
    */
-  private regenerateCaptcha() {
+  private regenerateCaptcha(): void {
     this._captchaModule?.clear();
     this._ccService.ccInit().subscribe((response) => {
       this._captchaModule?.fill(response.cc_content, response.cc_token);
