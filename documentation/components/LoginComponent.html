@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>web-application-poc documentation</title>
+        <title>web-application documentation</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -14,7 +14,7 @@
     <body>
 
         <div class="navbar navbar-default navbar-fixed-top visible-xs">
-            <a href="../" class="navbar-brand">web-application-poc documentation</a>
+            <a href="../" class="navbar-brand">web-application documentation</a>
             <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
         </div>
 
@@ -411,8 +411,8 @@ Se non è stato possibile effettuare l&#39;accesso, l&#39;errore viene notificat
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="176"
-                            class="link-to-prism">src/app/components/login/login.component.ts:176</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="196"
+                            class="link-to-prism">src/app/components/login/login.component.ts:196</a></div>
                 </td>
             </tr>
 
@@ -675,7 +675,7 @@ export class LoginComponent implements OnInit {
             &#x27;Si è verificato un errore nel recupero del test, per cui al momento non è possibile accedere al nostro sistema. Si prega di riprovare più tardi.&#x27;;
         }
       });
-    }, 2000);
+    }, 1000);
   }
 
   /**
@@ -708,6 +708,26 @@ export class LoginComponent implements OnInit {
               case &#x27;BAD_CAPTCHA&#x27;:
                 this._captchaModule?.clear();
                 this._captchaModule?.error(&#x27;OPS, ORARIO SCORRETTO!&#x27;);
+                this._ccService.ccInit().subscribe((response) &#x3D;&gt; {
+                  this._captchaModule?.fill(
+                    response.cc_content,
+                    response.cc_token
+                  );
+                });
+                break;
+              case &#x27;USED_TOKEN&#x27;:
+                this._captchaModule?.clear();
+                this._captchaModule?.error(&#x27;Qualcosa è andato storto. Riprova&#x27;);
+                this._ccService.ccInit().subscribe((response) &#x3D;&gt; {
+                  this._captchaModule?.fill(
+                    response.cc_content,
+                    response.cc_token
+                  );
+                });
+                break;
+              case &#x27;EXPIRED_TOKEN&#x27;:
+                this._captchaModule?.clear();
+                this._captchaModule?.error(&#x27;Il tempo è volato! Riprova&#x27;);
                 this._ccService.ccInit().subscribe((response) &#x3D;&gt; {
                   this._captchaModule?.fill(
                     response.cc_content,
@@ -784,9 +804,10 @@ export class LoginComponent implements OnInit {
       matInput
       placeholder&#x3D;&quot;La tua email&quot;
       formControlName&#x3D;&quot;email&quot;
+      data-testid&#x3D;&quot;email&quot;
     /&gt;
     &lt;mat-error *ngIf&#x3D;&quot;this._loginForm.get(&#x27;email&#x27;)?.hasError(&#x27;required&#x27;)&quot;&gt;
-      L&#x27;indirizzo email è necessario.
+      Indirizzo email necessario.
     &lt;/mat-error&gt;
     &lt;mat-error *ngIf&#x3D;&quot;this._loginForm.get(&#x27;email&#x27;)?.hasError(&#x27;pattern&#x27;)&quot;&gt;
       Inserisci una email valida.
@@ -806,12 +827,16 @@ export class LoginComponent implements OnInit {
       [type]&#x3D;&quot;_hide ? &#x27;password&#x27; : &#x27;text&#x27;&quot;
       placeholder&#x3D;&quot;La tua password&quot;
       formControlName&#x3D;&quot;password&quot;
+      data-testid&#x3D;&quot;psw&quot;
     /&gt;
-    &lt;mat-icon matSuffix (click)&#x3D;&quot;_hide &#x3D; !_hide&quot;&gt;{{
-      _hide ? &quot;visibility_off&quot; : &quot;visibility&quot;
-    }}&lt;/mat-icon&gt;
+    &lt;mat-icon
+      matSuffix
+      (click)&#x3D;&quot;_hide &#x3D; !_hide&quot;
+      data-testid&#x3D;&quot;plaintextPswButton&quot;
+      &gt;{{ _hide ? &quot;visibility_off&quot; : &quot;visibility&quot; }}&lt;/mat-icon
+    &gt;
     &lt;mat-error *ngIf&#x3D;&quot;this._loginForm.get(&#x27;password&#x27;)?.hasError(&#x27;required&#x27;)&quot;&gt;
-      La password è necessaria.
+      Password necessaria.
     &lt;/mat-error&gt;
     &lt;mat-error *ngIf&#x3D;&quot;this._loginForm.get(&#x27;password&#x27;)?.hasError(&#x27;format&#x27;)&quot;&gt;
       Formato password errato.
@@ -843,6 +868,7 @@ export class LoginComponent implements OnInit {
         : false
     &quot;
     (click)&#x3D;&quot;login()&quot;
+    data-testid&#x3D;&quot;submit&quot;
   &gt;
     ACCEDI
   &lt;/button&gt;
@@ -996,7 +1022,7 @@ button:disabled {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><form class="login-form" [formGroup]="_loginForm" autocomplete="off">  <h1>SIGNIN</h1>  <app-logo></app-logo>  <mat-form-field appearance="outline">    <mat-label>Email</mat-label>    <input      type="text"      matInput      placeholder="La tua email"      formControlName="email"    />    <mat-error *ngIf="this._loginForm.get(\'email\')?.hasError(\'required\')">      L\'indirizzo email è necessario.    </mat-error>    <mat-error *ngIf="this._loginForm.get(\'email\')?.hasError(\'pattern\')">      Inserisci una email valida.    </mat-error>    <mat-error      *ngIf="this._loginForm.get(\'email\')?.hasError(\'wrongCredentialError\')"    >      Credenziali errate.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Password</mat-label>    <input      type="password"      matInput      [type]="_hide ? \'password\' : \'text\'"      placeholder="La tua password"      formControlName="password"    />    <mat-icon matSuffix (click)="_hide = !_hide">{{      _hide ? "visibility_off" : "visibility"    }}</mat-icon>    <mat-error *ngIf="this._loginForm.get(\'password\')?.hasError(\'required\')">      La password è necessaria.    </mat-error>    <mat-error *ngIf="this._loginForm.get(\'password\')?.hasError(\'format\')">      Formato password errato.    </mat-error>    <mat-error      *ngIf="this._loginForm.get(\'password\')?.hasError(\'wrongCredentialError\')"    >      Credenziali errate.    </mat-error>  </mat-form-field>  <div id="clock-captcha"></div>  <div *ngIf="errorMessage" class="error">    <h3>Tempus Fugit</h3>    <p>{{ errorMessage }}</p>    <a routerLink="">Torna alla Home</a>  </div>  <button    mat-raised-button    color="primary"    type="submit"    [disabled]="      this._loginForm.get(\'email\')?.hasError(\'required\') ||      this._loginForm.get(\'password\')?.hasError(\'required\') ||      errorMessage        ? true        : false    "    (click)="login()"  >    ACCEDI  </button>  <div class="switchPage">    <p>Non sei ancora registrato? <a routerLink="/signup">REGISTRATI</a></p>  </div></form></div>'
+        var COMPONENT_TEMPLATE = '<div><form class="login-form" [formGroup]="_loginForm" autocomplete="off">  <h1>SIGNIN</h1>  <app-logo></app-logo>  <mat-form-field appearance="outline">    <mat-label>Email</mat-label>    <input      type="text"      matInput      placeholder="La tua email"      formControlName="email"      data-testid="email"    />    <mat-error *ngIf="this._loginForm.get(\'email\')?.hasError(\'required\')">      Indirizzo email necessario.    </mat-error>    <mat-error *ngIf="this._loginForm.get(\'email\')?.hasError(\'pattern\')">      Inserisci una email valida.    </mat-error>    <mat-error      *ngIf="this._loginForm.get(\'email\')?.hasError(\'wrongCredentialError\')"    >      Credenziali errate.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Password</mat-label>    <input      type="password"      matInput      [type]="_hide ? \'password\' : \'text\'"      placeholder="La tua password"      formControlName="password"      data-testid="psw"    />    <mat-icon      matSuffix      (click)="_hide = !_hide"      data-testid="plaintextPswButton"      >{{ _hide ? "visibility_off" : "visibility" }}</mat-icon    >    <mat-error *ngIf="this._loginForm.get(\'password\')?.hasError(\'required\')">      Password necessaria.    </mat-error>    <mat-error *ngIf="this._loginForm.get(\'password\')?.hasError(\'format\')">      Formato password errato.    </mat-error>    <mat-error      *ngIf="this._loginForm.get(\'password\')?.hasError(\'wrongCredentialError\')"    >      Credenziali errate.    </mat-error>  </mat-form-field>  <div id="clock-captcha"></div>  <div *ngIf="errorMessage" class="error">    <h3>Tempus Fugit</h3>    <p>{{ errorMessage }}</p>    <a routerLink="">Torna alla Home</a>  </div>  <button    mat-raised-button    color="primary"    type="submit"    [disabled]="      this._loginForm.get(\'email\')?.hasError(\'required\') ||      this._loginForm.get(\'password\')?.hasError(\'required\') ||      errorMessage        ? true        : false    "    (click)="login()"    data-testid="submit"  >    ACCEDI  </button>  <div class="switchPage">    <p>Non sei ancora registrato? <a routerLink="/signup">REGISTRATI</a></p>  </div></form></div>'
     var COMPONENTS = [{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'HomepageComponent', 'selector': 'app-homepage'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'LogoComponent', 'selector': 'app-logo'},{'name': 'RegistrationComponent', 'selector': 'app-registration'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'LoginComponent'};

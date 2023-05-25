@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>web-application-poc documentation</title>
+        <title>web-application documentation</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -14,7 +14,7 @@
     <body>
 
         <div class="navbar navbar-default navbar-fixed-top visible-xs">
-            <a href="../" class="navbar-brand">web-application-poc documentation</a>
+            <a href="../" class="navbar-brand">web-application documentation</a>
             <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
         </div>
 
@@ -364,8 +364,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="180"
-                            class="link-to-prism">src/app/components/registration/registration.component.ts:180</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="193"
+                            class="link-to-prism">src/app/components/registration/registration.component.ts:193</a></div>
                 </td>
             </tr>
 
@@ -404,8 +404,8 @@ Una volta ricevuta risposta dal server, aggiorna il modulo del CAPTCHA con il nu
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="96"
-                            class="link-to-prism">src/app/components/registration/registration.component.ts:96</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="98"
+                            class="link-to-prism">src/app/components/registration/registration.component.ts:98</a></div>
                 </td>
             </tr>
 
@@ -659,14 +659,16 @@ export class RegistrationComponent implements OnInit {
    */
   ngOnInit(): void {
     this._captchaModule.inject(document.getElementById(&#x27;clock-captcha_signup&#x27;));
-    this._ccService.ccInit().subscribe((response) &#x3D;&gt; {
-      if (response.cc_content &amp;&amp; response.cc_token)
-        this._captchaModule.fill(response.cc_content, response.cc_token);
-      else {
-        this.errorMessage &#x3D;
-          &#x27;Si è verificato un errore nel recupero del test, per cui al momento non è possibile accedere al nostro sistema. Si prega di riprovare più tardi.&#x27;;
-      }
-    });
+    setTimeout(() &#x3D;&gt; {
+      this._ccService.ccInit().subscribe((response) &#x3D;&gt; {
+        if (response.cc_content &amp;&amp; response.cc_token)
+          this._captchaModule.fill(response.cc_content, response.cc_token);
+        else {
+          this.errorMessage &#x3D;
+            &#x27;Si è verificato un errore nel recupero del test, per cui al momento non è possibile accedere al nostro sistema. Si prega di riprovare più tardi.&#x27;;
+        }
+      });
+    }, 1000);
   }
 
   /**
@@ -693,6 +695,7 @@ export class RegistrationComponent implements OnInit {
         .subscribe((result) &#x3D;&gt; {
           if (result.okay) {
             this._router.navigate([&#x27;/login&#x27;]);
+            this._snackBar.open(&#x27;Registrazione avvenuta con successo!&#x27;, &#x27;OK&#x27;);
           } else {
             switch (result.case) {
               case &#x27;BAD_CAPTCHA&#x27;:
@@ -708,6 +711,16 @@ export class RegistrationComponent implements OnInit {
               case &#x27;USED_TOKEN&#x27;:
                 this._captchaModule?.clear();
                 this._captchaModule?.error(&#x27;Qualcosa è andato storto. Riprova&#x27;);
+                this._ccService.ccInit().subscribe((response) &#x3D;&gt; {
+                  this._captchaModule?.fill(
+                    response.cc_content,
+                    response.cc_token
+                  );
+                });
+                break;
+              case &#x27;EXPIRED_TOKEN&#x27;:
+                this._captchaModule?.clear();
+                this._captchaModule?.error(&#x27;Il tempo è volato! Riprova&#x27;);
                 this._ccService.ccInit().subscribe((response) &#x3D;&gt; {
                   this._captchaModule?.fill(
                     response.cc_content,
@@ -760,7 +773,7 @@ export class RegistrationComponent implements OnInit {
    * Rigenera il CAPTCHA ripulendo il modulo corrente e richiedendone uno nuovo al servizio di back end.
    * Una volta ricevuta risposta dal server, aggiorna il modulo del CAPTCHA con il nuovo contenuto e il nuovo token generato.
    */
-  private regenerateCaptcha() {
+  private regenerateCaptcha(): void {
     this._captchaModule?.clear();
     this._ccService.ccInit().subscribe((response) &#x3D;&gt; {
       this._captchaModule?.fill(response.cc_content, response.cc_token);
@@ -782,6 +795,7 @@ export class RegistrationComponent implements OnInit {
       type&#x3D;&quot;text&quot;
       placeholder&#x3D;&quot;Mario&quot;
       formControlName&#x3D;&quot;firstName&quot;
+      data-testid&#x3D;&quot;firstName&quot;
     /&gt;
 
     &lt;mat-error *ngIf&#x3D;&quot;this._signupForm.get(&#x27;firstName&#x27;)?.hasError(&#x27;required&#x27;)&quot;&gt;
@@ -799,6 +813,7 @@ export class RegistrationComponent implements OnInit {
       type&#x3D;&quot;text&quot;
       placeholder&#x3D;&quot;Rossi&quot;
       formControlName&#x3D;&quot;lastName&quot;
+      data-testid&#x3D;&quot;lastName&quot;
     /&gt;
 
     &lt;mat-error *ngIf&#x3D;&quot;this._signupForm.get(&#x27;lastName&#x27;)?.hasError(&#x27;required&#x27;)&quot;&gt;
@@ -816,6 +831,7 @@ export class RegistrationComponent implements OnInit {
       type&#x3D;&quot;text&quot;
       placeholder&#x3D;&quot;DalìTheBest&quot;
       formControlName&#x3D;&quot;username&quot;
+      data-testid&#x3D;&quot;username&quot;
     /&gt;
 
     &lt;mat-error *ngIf&#x3D;&quot;this._signupForm.get(&#x27;username&#x27;)?.hasError(&#x27;required&#x27;)&quot;&gt;
@@ -830,6 +846,7 @@ export class RegistrationComponent implements OnInit {
       type&#x3D;&quot;text&quot;
       placeholder&#x3D;&quot;La tua email&quot;
       formControlName&#x3D;&quot;email&quot;
+      data-testid&#x3D;&quot;email&quot;
     /&gt;
 
     &lt;mat-error *ngIf&#x3D;&quot;this._signupForm.get(&#x27;email&#x27;)?.hasError(&#x27;required&#x27;)&quot;&gt;
@@ -853,10 +870,14 @@ export class RegistrationComponent implements OnInit {
       [type]&#x3D;&quot;_hide ? &#x27;password&#x27; : &#x27;text&#x27;&quot;
       placeholder&#x3D;&quot;La tua password&quot;
       formControlName&#x3D;&quot;password&quot;
+      data-testid&#x3D;&quot;psw&quot;
     /&gt;
-    &lt;mat-icon matSuffix (click)&#x3D;&quot;_hide &#x3D; !_hide&quot;&gt;{{
-      _hide ? &quot;visibility_off&quot; : &quot;visibility&quot;
-    }}&lt;/mat-icon&gt;
+    &lt;mat-icon
+      matSuffix
+      (click)&#x3D;&quot;_hide &#x3D; !_hide&quot;
+      data-testid&#x3D;&quot;plaintextPswButton&quot;
+      &gt;{{ _hide ? &quot;visibility_off&quot; : &quot;visibility&quot; }}&lt;/mat-icon
+    &gt;
 
     &lt;mat-error *ngIf&#x3D;&quot;this._signupForm.get(&#x27;password&#x27;)?.hasError(&#x27;required&#x27;)&quot;&gt;
       Password necessaria per effettuare la registrazione.
@@ -881,6 +902,7 @@ export class RegistrationComponent implements OnInit {
     type&#x3D;&quot;submit&quot;
     [disabled]&#x3D;&quot;!this._signupForm.valid ? true : false&quot;
     (click)&#x3D;&quot;signUp()&quot;
+    data-testid&#x3D;&quot;submit&quot;
   &gt;
     REGISTRATI
   &lt;/button&gt;
@@ -1022,7 +1044,7 @@ button:disabled {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><form class="signup-form" [formGroup]="_signupForm" autocomplete="off">  <h1>REGISTRAZIONE</h1>  <app-logo></app-logo>  <mat-form-field appearance="outline">    <mat-label>Nome</mat-label>    <input      matInput      type="text"      placeholder="Mario"      formControlName="firstName"    />    <mat-error *ngIf="this._signupForm.get(\'firstName\')?.hasError(\'required\')">      Nome necessario per effettuare la registrazione.    </mat-error>    <mat-error *ngIf="this._signupForm.get(\'firstName\')?.hasError(\'pattern\')">      Formato nome non valido.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Cognome</mat-label>    <input      matInput      type="text"      placeholder="Rossi"      formControlName="lastName"    />    <mat-error *ngIf="this._signupForm.get(\'lastName\')?.hasError(\'required\')">      Cognome necessario per effettuare la registrazione.    </mat-error>    <mat-error *ngIf="this._signupForm.get(\'lastName\')?.hasError(\'pattern\')">      Formato cognome non valido.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Username</mat-label>    <input      matInput      type="text"      placeholder="DalìTheBest"      formControlName="username"    />    <mat-error *ngIf="this._signupForm.get(\'username\')?.hasError(\'required\')">      Username necessario per effettuare la registrazione.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Email</mat-label>    <input      matInput      type="text"      placeholder="La tua email"      formControlName="email"    />    <mat-error *ngIf="this._signupForm.get(\'email\')?.hasError(\'required\')">      Email necessaria per effettuare la registrazione.    </mat-error>    <mat-error *ngIf="this._signupForm.get(\'email\')?.hasError(\'pattern\')">      Inserisci una email valida.    </mat-error>    <mat-error      *ngIf="this._signupForm.get(\'email\')?.hasError(\'alreadyExisted\')"    >      Email già in uso.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Password</mat-label>    <input      matInput      [type]="_hide ? \'password\' : \'text\'"      placeholder="La tua password"      formControlName="password"    />    <mat-icon matSuffix (click)="_hide = !_hide">{{      _hide ? "visibility_off" : "visibility"    }}</mat-icon>    <mat-error *ngIf="this._signupForm.get(\'password\')?.hasError(\'required\')">      Password necessaria per effettuare la registrazione.    </mat-error>    <mat-error *ngIf="this._signupForm.get(\'password\')?.hasError(\'pattern\')">      La password deve avere almeno 8 caratteri, almeno un carattere minuscolo,      almeno un carattere maiuscolo e almeno un numero    </mat-error>  </mat-form-field>  <div id="clock-captcha_signup"></div>  <div *ngIf="errorMessage" class="error">    <h3>Tempus Fugit</h3>    <p>{{ errorMessage }}</p>    <a routerLink="">Torna alla Home</a>  </div>  <button    mat-raised-button    color="primary"    type="submit"    [disabled]="!this._signupForm.valid ? true : false"    (click)="signUp()"  >    REGISTRATI  </button>  <div class="switchPage">    <p>Sei già registrato? <a routerLink="/login">ACCEDI</a></p>  </div></form></div>'
+        var COMPONENT_TEMPLATE = '<div><form class="signup-form" [formGroup]="_signupForm" autocomplete="off">  <h1>REGISTRAZIONE</h1>  <app-logo></app-logo>  <mat-form-field appearance="outline">    <mat-label>Nome</mat-label>    <input      matInput      type="text"      placeholder="Mario"      formControlName="firstName"      data-testid="firstName"    />    <mat-error *ngIf="this._signupForm.get(\'firstName\')?.hasError(\'required\')">      Nome necessario per effettuare la registrazione.    </mat-error>    <mat-error *ngIf="this._signupForm.get(\'firstName\')?.hasError(\'pattern\')">      Formato nome non valido.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Cognome</mat-label>    <input      matInput      type="text"      placeholder="Rossi"      formControlName="lastName"      data-testid="lastName"    />    <mat-error *ngIf="this._signupForm.get(\'lastName\')?.hasError(\'required\')">      Cognome necessario per effettuare la registrazione.    </mat-error>    <mat-error *ngIf="this._signupForm.get(\'lastName\')?.hasError(\'pattern\')">      Formato cognome non valido.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Username</mat-label>    <input      matInput      type="text"      placeholder="DalìTheBest"      formControlName="username"      data-testid="username"    />    <mat-error *ngIf="this._signupForm.get(\'username\')?.hasError(\'required\')">      Username necessario per effettuare la registrazione.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Email</mat-label>    <input      matInput      type="text"      placeholder="La tua email"      formControlName="email"      data-testid="email"    />    <mat-error *ngIf="this._signupForm.get(\'email\')?.hasError(\'required\')">      Email necessaria per effettuare la registrazione.    </mat-error>    <mat-error *ngIf="this._signupForm.get(\'email\')?.hasError(\'pattern\')">      Inserisci una email valida.    </mat-error>    <mat-error      *ngIf="this._signupForm.get(\'email\')?.hasError(\'alreadyExisted\')"    >      Email già in uso.    </mat-error>  </mat-form-field>  <mat-form-field appearance="outline">    <mat-label>Password</mat-label>    <input      matInput      [type]="_hide ? \'password\' : \'text\'"      placeholder="La tua password"      formControlName="password"      data-testid="psw"    />    <mat-icon      matSuffix      (click)="_hide = !_hide"      data-testid="plaintextPswButton"      >{{ _hide ? "visibility_off" : "visibility" }}</mat-icon    >    <mat-error *ngIf="this._signupForm.get(\'password\')?.hasError(\'required\')">      Password necessaria per effettuare la registrazione.    </mat-error>    <mat-error *ngIf="this._signupForm.get(\'password\')?.hasError(\'pattern\')">      La password deve avere almeno 8 caratteri, almeno un carattere minuscolo,      almeno un carattere maiuscolo e almeno un numero    </mat-error>  </mat-form-field>  <div id="clock-captcha_signup"></div>  <div *ngIf="errorMessage" class="error">    <h3>Tempus Fugit</h3>    <p>{{ errorMessage }}</p>    <a routerLink="">Torna alla Home</a>  </div>  <button    mat-raised-button    color="primary"    type="submit"    [disabled]="!this._signupForm.valid ? true : false"    (click)="signUp()"    data-testid="submit"  >    REGISTRATI  </button>  <div class="switchPage">    <p>Sei già registrato? <a routerLink="/login">ACCEDI</a></p>  </div></form></div>'
     var COMPONENTS = [{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'HomepageComponent', 'selector': 'app-homepage'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'LogoComponent', 'selector': 'app-logo'},{'name': 'RegistrationComponent', 'selector': 'app-registration'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'RegistrationComponent'};
