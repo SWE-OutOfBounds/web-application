@@ -6,7 +6,7 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Observable, map, take } from 'rxjs';
 import { SessionService } from '../services/session/session.service';
 
 @Injectable({
@@ -43,6 +43,7 @@ export class NotAuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> {
     return this._sessionService.user.pipe(
+      take(1),
       map((user) => {
         if (!user) {
           return true;

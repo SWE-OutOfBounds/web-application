@@ -9,6 +9,7 @@
       type="text"
       placeholder="Mario"
       formControlName="firstName"
+      data-testid="firstName"
     />
 
     <mat-error *ngIf="this._signupForm.get('firstName')?.hasError('required')">
@@ -26,6 +27,7 @@
       type="text"
       placeholder="Rossi"
       formControlName="lastName"
+      data-testid="lastName"
     />
 
     <mat-error *ngIf="this._signupForm.get('lastName')?.hasError('required')">
@@ -43,6 +45,7 @@
       type="text"
       placeholder="DalìTheBest"
       formControlName="username"
+      data-testid="username"
     />
 
     <mat-error *ngIf="this._signupForm.get('username')?.hasError('required')">
@@ -57,6 +60,7 @@
       type="text"
       placeholder="La tua email"
       formControlName="email"
+      data-testid="email"
     />
 
     <mat-error *ngIf="this._signupForm.get('email')?.hasError('required')">
@@ -80,10 +84,14 @@
       [type]="_hide ? 'password' : 'text'"
       placeholder="La tua password"
       formControlName="password"
+      data-testid="psw"
     />
-    <mat-icon matSuffix (click)="_hide = !_hide">{{
-      _hide ? "visibility_off" : "visibility"
-    }}</mat-icon>
+    <mat-icon
+      matSuffix
+      (click)="_hide = !_hide"
+      data-testid="plaintextPswButton"
+      >{{ _hide ? "visibility_off" : "visibility" }}</mat-icon
+    >
 
     <mat-error *ngIf="this._signupForm.get('password')?.hasError('required')">
       Password necessaria per effettuare la registrazione.
@@ -108,6 +116,7 @@
     type="submit"
     [disabled]="!this._signupForm.valid ? true : false"
     (click)="signUp()"
+    data-testid="submit"
   >
     REGISTRATI
   </button>

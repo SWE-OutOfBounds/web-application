@@ -9,9 +9,10 @@
       matInput
       placeholder="La tua email"
       formControlName="email"
+      data-testid="email"
     />
     <mat-error *ngIf="this._loginForm.get('email')?.hasError('required')">
-      L'indirizzo email è necessario.
+      Indirizzo email necessario.
     </mat-error>
     <mat-error *ngIf="this._loginForm.get('email')?.hasError('pattern')">
       Inserisci una email valida.
@@ -31,12 +32,16 @@
       [type]="_hide ? 'password' : 'text'"
       placeholder="La tua password"
       formControlName="password"
+      data-testid="psw"
     />
-    <mat-icon matSuffix (click)="_hide = !_hide">{{
-      _hide ? "visibility_off" : "visibility"
-    }}</mat-icon>
+    <mat-icon
+      matSuffix
+      (click)="_hide = !_hide"
+      data-testid="plaintextPswButton"
+      >{{ _hide ? "visibility_off" : "visibility" }}</mat-icon
+    >
     <mat-error *ngIf="this._loginForm.get('password')?.hasError('required')">
-      La password è necessaria.
+      Password necessaria.
     </mat-error>
     <mat-error *ngIf="this._loginForm.get('password')?.hasError('format')">
       Formato password errato.
@@ -68,6 +73,7 @@
         : false
     "
     (click)="login()"
+    data-testid="submit"
   >
     ACCEDI
   </button>
