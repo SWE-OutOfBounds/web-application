@@ -4,8 +4,6 @@ describe('The Login Page', () => {
     cy.visit('/login');
   });
 
-
-
   /**
    * R1F2 - Accesso al sistema
    * R1F2.1 - inserimento email
@@ -49,12 +47,51 @@ describe('The Login Page', () => {
       cy.get('[data-testid="submit"]').should('be.enabled');
     });
 
+    it('should log in when data are correct', () => {
+      cy.intercept('POST', `${backendUrl}/session`, (req) => {
+        const customResponse = {
+          statusCode: 200,
+          body: {
+            username: 'BigMario',
+            session_token: 'sessionToken',
+            expiredIn: 3600,
+          },
+        };
+
+        req.reply(customResponse);
+      }).as('postRequest'); // Assegna un alias all'intercettazione
+
+      cy.visit('/login');
+
+      cy.get('[data-testid="email"]').type('mario.rossi@gmmail.com');
+      cy.get('[data-testid="psw"]').type('Password1234');
+      cy.get('#clock-captcha input').type('07:45');
+
+      cy.wait(500);
+
+      cy.get('[data-testid="submit"]').click();
+
+      cy.wait('@postRequest').then((interception) => {
+        cy.location('pathname').should('eq', '/');
+        cy.get('.example-card mat-card-title').should(
+          'not.have.text',
+          'Ospite'
+        );
+        cy.get('.example-card mat-card-subtitle').should('not.have.text', '');
+        cy.get('[data-testid="logout-button"]').should('have.text', ' ESCI ');
+      });
+    });
   });
-
-
 
   /**
    * R1F1 Risoluzione CAPTCHA
+   * R1F1.1
+   * R1F1.1.1
+   * R1F1.1.2
+   * R1F1.1.3
+   * R1F1.2
+   * R1F1.2.1
+   * R1F1.2.2
    */
   describe('clock CAPTCHA', () => {
     beforeEach(() => {
@@ -96,6 +133,7 @@ describe('The Login Page', () => {
     beforeEach(() => {
       cy.visit('/login');
     });
+
     it('should display "email required" error when there is no email in input', () => {
       cy.get('[data-testid="email"]').type('mario'); //inizia a digitare
       cy.get('[data-testid="email"]').clear(); //cancella il campo necessario
@@ -134,6 +172,8 @@ describe('The Login Page', () => {
       cy.get('[data-testid="psw"]').type('Password');
       cy.get('#clock-captcha input').type('07:45');
 
+      cy.wait(500);
+
       cy.get('[data-testid="submit"]').click();
 
       cy.wait('@postRequest').then((interception) => {
@@ -149,7 +189,7 @@ describe('The Login Page', () => {
    * R2F6 - Errore fallimento test clock CAPTCHA
    */
   describe('Bad Captcha', () => {
-    it('should display an error message in case of bad captcha', ()=>{
+    it('should display an error message in case of bad captcha', () => {
       cy.intercept('POST', `${backendUrl}/session`, (req) => {
         const customResponse = {
           statusCode: 400,
@@ -167,10 +207,15 @@ describe('The Login Page', () => {
       cy.get('[data-testid="psw"]').type('Password123');
       cy.get('#clock-captcha input').type('07:45');
 
+      cy.wait(500);
+
       cy.get('[data-testid="submit"]').click();
 
       cy.wait('@postRequest').then((interception) => {
-        cy.get('#clock-captcha p').should('have.text','OPS, ORARIO SCORRETTO!')
+        cy.get('#clock-captcha p').should(
+          'have.text',
+          'OPS, ORARIO SCORRETTO!'
+        );
       });
     });
   });

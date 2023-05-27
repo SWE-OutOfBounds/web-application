@@ -55,10 +55,44 @@ describe('The Registration Page', () => {
 
       cy.get('[data-testid="submit"]').should('be.enabled');
     });
+    it('should sign up when data are correct', () => {
+      cy.intercept('POST', `${backendUrl}/users`, (req) => {
+        const customResponse = {
+          statusCode: 201,
+          body: {
+            details: 'CREATED',
+          },
+        };
+
+        req.reply(customResponse);
+      }).as('postRequest'); // Assegna un alias all'intercettazione
+
+      cy.visit('/signup');
+
+      cy.get('[data-testid="firstName"]').type('nome');
+      cy.get('[data-testid="lastName"]').type('cognome');
+      cy.get('[data-testid="username"]').type('nomeUtente#123');
+      cy.get('[data-testid="email"]').type('esempio@test.com');
+      cy.get('[data-testid="psw"]').type('Password987');
+      cy.get('#clock-captcha_signup input').type('07:45');
+
+      cy.get('[data-testid="submit"]').click();
+
+      cy.wait('@postRequest').then((interception) => {
+        cy.location('pathname').should('eq', '/login');
+      });
+    });
   });
 
   /**
    * R1F1 Risoluzione CAPTCHA
+   * R1F1.1
+   * R1F1.1.1
+   * R1F1.1.2
+   * R1F1.1.3
+   * R1F1.2
+   * R1F1.2.1
+   * R1F1.2.2
    */
   describe('clock CAPTCHA', () => {
     beforeEach(() => {
